@@ -3,7 +3,6 @@ from fastapi import Depends, APIRouter, HTTPException, Security, status
 import jwt
 from passlib.context import CryptContext
 from api.routes.security.schema import User
-from api.sql_app.mock.user import get_user_form_db_by_username
 from api.settings import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter()
@@ -15,13 +14,13 @@ def get_password_hash(password: str):
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-def authenticate_user(username: str, password: str): 
-    user = get_user_form_db_by_username(username)
-    if not user:
-        return False
-    if not verify_password(password, user.hashed_password):
-        return False
-    return user
+# def authenticate_user(username: str, password: str): 
+#     user = get_user_form_db_by_username(username)
+#     if not user:
+#         return False
+#     if not verify_password(password, user.hashed_password):
+#         return False
+#     return user
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()

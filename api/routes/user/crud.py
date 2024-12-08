@@ -61,9 +61,9 @@ def get_projs(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Proj).offset(skip).limit(limit).all()
 
 
-def create_user_proj(db: Session, proj: schemas.ProjCreateIn, user_id: int):
-    db_proj = models.Proj(**proj.model_dump(), owner_id=user_id)
-    db.add(db_proj)
-    db.commit()
-    db.refresh(db_proj)
-    return db_proj
+# def create_user_proj(db: Session, proj: schemas.ProjCreateIn, user_id: int):
+#     db_proj = models.Proj(**proj.model_dump(), owner_id=user_id)
+#     db.add(db_proj)
+#     db.commit()
+#     db.refresh(db_proj)
+#     return db_proj

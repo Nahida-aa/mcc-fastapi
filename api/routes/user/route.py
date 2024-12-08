@@ -3,9 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlmodel import Session
 from api.routes.security import verify_password, get_password_hash
-from api.routes.security.depend import get_current_active_user
+# from api.routes.security.depend import get_current_active_user
 from api.routes.security.schema import User, UserDB
-from api.sql_app.mock.user import get_user_form_db_by_username
 from . import crud, models, schemas
 # from api.lib.database import SessionLocal, engine
 from api.lib.database import  engine
@@ -45,11 +44,11 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-@router.post("/users/{user_id}/projs/", response_model=schemas.Proj)
-def create_item_for_user(
-    user_id: int, proj: schemas.ProjCreateIn, db: Session = Depends(get_db)
-):
-    return crud.create_user_proj(db=db, proj=proj, user_id=user_id)
+# @router.post("/users/{user_id}/projs/", response_model=schemas.Proj)
+# def create_item_for_user(
+#     user_id: int, proj: schemas.ProjCreateIn, db: Session = Depends(get_db)
+# ):
+#     return crud.create_user_proj(db=db, proj=proj, user_id=user_id)
 @router.get("/projs/", response_model=list[schemas.Proj])
 def read_projs(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
     projs = crud.get_projs(db, skip=skip, limit=limit)

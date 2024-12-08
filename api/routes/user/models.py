@@ -89,8 +89,8 @@ class Resource(SQLModel, table=True):
     owner_user_id: Optional[int] = Field(default=None, foreign_key="user.id")
     owner_team_id: Optional[int] = Field(default=None, foreign_key="team.id")
 
-    owner_user: Optional[User] = Relationship(back_populates="resources", foreign_keys=[owner_user_id])
-    owner_team: Optional[Team] = Relationship(back_populates="resources", foreign_keys=[owner_team_id])
+    # owner_user: Optional[User] = Relationship(back_populates="resources", foreign_keys=[owner_user_id])
+    # owner_team: Optional[Team] = Relationship(back_populates="resources", foreign_keys=[owner_team_id])
 
     owner: Optional[User] = Relationship(back_populates="resources")
     
