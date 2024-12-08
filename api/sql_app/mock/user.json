@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "username": "aa",
+    "email": "aa@aa.aa",
+    "hashed_password": "$2b$12$KGv8dzbMHKbEjdyNlVjCqeHEI/l.tMQo4QasLM6mU/.9NQPFhSsmC",
+    "is_active": true,
+    "platform_info": {
+      "mc_experience": "1-3年",
+      "play_reason": "喜欢建造",
+      "server_type": "公益服",
+      "favorite_content": {
+        "building": true,
+        "survival": false,
+        "adventure": true,
+        "technology": false
+      },
+      "desired_partners": "同好建筑内容的伙伴"
+    }
+  },
+  {  
+    "id": 2,    
+    "username": "xaa",
+    "email": "xaa@aa.aa",
+    "hashed_password": "$2b$12$gaUL7apaSSFSBTlozeLLtOMIyfyZ6Zm/xE3P/AseuuJCr7A5NRNk.",
+    "is_active": false
+  }
+]
