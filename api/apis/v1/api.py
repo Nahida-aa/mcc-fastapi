@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from api.apis.v1.routes import (
     # natural_language,
-    users,
+    user,
     # hero,
     # team,
     # login,

@@ -26,13 +26,13 @@ class Settings(BaseSettings):
     # DATABASE_HOST: str
     # DATABASE_PORT: int
     # DATABASE_NAME: str
-    DATABASE_CELERY_NAME: str = "celery_schedule_jobs"
+    # DATABASE_CELERY_NAME: str = "celery_schedule_jobs"
     # REDIS_HOST: str
     # REDIS_PORT: str
-    DB_POOL_SIZE: int = 83
-    WEB_CONCURRENCY: int = 9
-    POOL_SIZE: int = max(DB_POOL_SIZE // WEB_CONCURRENCY, 5)
-    ASYNC_DATABASE_URI: PostgresDsn | str = ""
+    # DB_POOL_SIZE: int = 83
+    # WEB_CONCURRENCY: int = 9
+    # POOL_SIZE: int = max(DB_POOL_SIZE // WEB_CONCURRENCY, 5)
+    # ASYNC_DATABASE_URI: PostgresDsn | str = ""
 
     # @field_validator("ASYNC_DATABASE_URI", mode="after")
     # def assemble_db_connection(cls, v: str | None, info: FieldValidationInfo) -> Any:
@@ -48,7 +48,7 @@ class Settings(BaseSettings):
     #             )
     #     return v
 
-    SYNC_CELERY_DATABASE_URI: PostgresDsn | str = ""
+    # SYNC_CELERY_DATABASE_URI: PostgresDsn | str = ""
 
     # @field_validator("SYNC_CELERY_DATABASE_URI", mode="after")
     # def assemble_celery_db_connection(
@@ -84,7 +84,7 @@ class Settings(BaseSettings):
     #             )
     #     return v
 
-    ASYNC_CELERY_BEAT_DATABASE_URI: PostgresDsn | str = ""
+    # ASYNC_CELERY_BEAT_DATABASE_URI: PostgresDsn | str = ""
 
     # @field_validator("ASYNC_CELERY_BEAT_DATABASE_URI", mode="after")
     # def assemble_async_celery_beat_db_connection(

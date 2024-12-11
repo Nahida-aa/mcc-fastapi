@@ -3,9 +3,9 @@ from fastapi import Depends, APIRouter, HTTPException, Security, status
 import jwt
 from passlib.context import CryptContext
 from api.routes.security.schema import User
-from api.settings import ALGORITHM
 from api.core.config import settings
 
+ALGORITHM = "HS256"
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_password_hash(password: str):
