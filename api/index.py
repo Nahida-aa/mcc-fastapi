@@ -17,14 +17,13 @@ from lib.database import create_db_and_tables
 # from api.routes.user import route as user_route
 from lib.database import  engine
 
-from api.apis.v1.api import api_router as api_router_v1
+# from api.apis.v1.api import api_router as api_router_v1
 
 
 
 app = FastAPI(docs_url="/api/py/docs",redoc_url="/api/py/redoc", openapi_url="/api/py/openapi.json")
 
-# app.include_router(security_route.router)
-# app.include_router(user_route.router)
+
 
 
 @app.get("/api/py/helloFastApi")
@@ -49,4 +48,6 @@ def hello_fast_api_post():
 
 # Add Routers
 # app.include_router(api_router_v1, prefix=settings.API_V1_STR)
-app.include_router(api_router_v1, prefix="/api/v1/py")
+# app.include_router(api_router_v1, prefix="/api/v1/py")
+# app.include_router(user_api.router, prefix="/api/user", tags=["user"])
+# app.include_router(user_route.router)
