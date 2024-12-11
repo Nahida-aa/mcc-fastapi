@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Optional
 from sqlmodel import Field, Relationship
-from api.models.base_id_model import SQLModel, TimestampMixin
-from api.models.links_model import LinkUserIdentity, LinkUserPlatformInfoTag, LinkUserProj, LinkUserResource, LinkUserTeam
+from models.base_id_model import SQLModel, TimestampMixin
+from models.links_model import LinkUserIdentity, LinkUserPlatformInfoTag, LinkUserProj, LinkUserResource, LinkUserTeam
 
 
 class UserBase(SQLModel):

@@ -1,6 +1,6 @@
 from sqlmodel import Relationship
-from api.models.base_id_model import AutoIDNameModel
-from api.models.links_model import LinkTeamIdentity, LinkTeamProj, LinkTeamResource, LinkUserTeam
+from models.base_id_model import AutoIDNameModel
+from models.links_model import LinkTeamIdentity, LinkTeamProj, LinkTeamResource, LinkUserTeam
 
 
 class Team(AutoIDNameModel, table=True):
