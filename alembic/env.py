@@ -1,9 +1,9 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config,pool
 
 from alembic import context
+from sqlmodel import SQLModel
 
 # 导入你的 SQLAlchemy Base 和 engine
 # from api.lib.database import Base  # 请根据你的实际项目路径修改
@@ -22,10 +22,11 @@ config.set_main_option('sqlalchemy.url', SQLALCHEMY_DATABASE_URL)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from api.routes.user import models
+# from api.routes.user import models
+from api.models import *
 # target_metadata = mymodel.Base.metadata
 # target_metadata = models.Base.metadata
-target_metadata = models.SQLModel.metadata
+target_metadata = SQLModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

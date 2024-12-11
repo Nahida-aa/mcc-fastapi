@@ -5,5 +5,7 @@ pyjwt
 bcrypt==4.0.1
 passlib[bcrypt]
 sqlalchemy
+sqlmodel
 psycopg2-binary
 python-dotenv
+pydantic-settings

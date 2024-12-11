@@ -6,7 +6,7 @@ import jwt
 from pydantic import ValidationError
 
 from api.routes.security.schema import TokenData, User
-from api.settings import ALGORITHM, SECRET_KEY
+# from api.settings import ALGORITHM, SECRET_KEY
 
 
 oauth2_scheme = OAuth2PasswordBearer(

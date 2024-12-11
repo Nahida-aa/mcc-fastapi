@@ -36,10 +36,10 @@ class IDCardInfo_Out(IDCardInfoBase):
     user_id: int
 
 class FavoriteContent(BaseModel): # 喜欢的内容 TODO: 预期可能经常发生变化
-    building: bool = False
-    survival: bool = False
-    adventure: bool = False
-    technology: bool = False
+    building: bool = False # 建筑
+    survival: bool = False # 生存
+    adventure: bool = False # 冒险
+    technology: bool = False # 科技
     
     class Config:
         from_attributes = True

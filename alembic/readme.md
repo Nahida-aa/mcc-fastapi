@@ -1,3 +1,66 @@
+# Alembic
+
+## commmands
+
+### 1. 初始化 Alembic
+
+```sh
+alembic init alembic
+```
+
+### 2. 查看当前数据库版本
+
+```sh
+alembic current
+```
+
+### 3. 创建迁移脚本
+
+```sh
+alembic revision --autogenerate -m "1"
+```
+
+#### 生成 err
+
+##### Target database is not up to date 目标数据库不是最新的
+
+```sh
+alembic stamp head
+```
+
+### 4. 应用迁移(升级数据库到最新版本)
+
+```sh
+alembic upgrade head
+```
+
+#### 迁移 err
+
+##### DuplicateColumn 重复列
+
+需要手动删除重复列:
+
+```sql
+ALTER TABLE "user" DROP COLUMN IF EXISTS avatar;
+```
+
+##### DependentObjectsStillExist 依赖对象仍然存在
+
+手动删除依赖的外键约束:
+
+```sql
+ALTER TABLE useridentitylink DROP CONSTRAINT IF EXISTS useridentitylink_user_id_fkey;
+```
+
+```sh
+# 回滚到上一个版本
+alembic downgrade -1
+# 回滚到初始版本
+alembic downgrade base
+# 回滚到指定版本
+alembic downgrade <revision>
+```
+
 不能删表，现在生产数据库是旧结构，本地的代码是新的 ？
 
 

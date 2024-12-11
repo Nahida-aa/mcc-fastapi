@@ -10,7 +10,7 @@ from .depend import (
     # get_current_active_user, 
     #                  get_current_user, 
                      oauth2_scheme)
-from api.settings import ACCESS_TOKEN_EXPIRE_MINUTES
+# from api.settings import ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter(
     tags=["security"],
