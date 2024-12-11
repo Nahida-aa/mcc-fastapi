@@ -12,10 +12,10 @@ from pydantic import BaseModel
 from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import Session, select
-from api.lib.database import create_db_and_tables
+from lib.database import create_db_and_tables
 # from api.routes.security import route as security_route
 # from api.routes.user import route as user_route
-from api.lib.database import  engine
+from lib.database import  engine
 
 from api.apis.v1.api import api_router as api_router_v1
 
