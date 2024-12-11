@@ -3,8 +3,9 @@ from fastapi import Depends, APIRouter, HTTPException, Security, status
 import jwt
 from passlib.context import CryptContext
 from api.routes.security.schema import User
-from api.core.config import settings
+# from api.core.config import settings
 
+SECRET_KEY = "dd60e1668ffb6ea94d9c30dce6fe42fa1a6cb1ae9f0f71f05860ecd1a4fc9cd6"
 ALGORITHM = "HS256"
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -28,7 +29,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     else:
         expire = datetime.now(timezone.utc) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 

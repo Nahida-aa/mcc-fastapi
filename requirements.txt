@@ -8,4 +8,4 @@ sqlalchemy
 sqlmodel
 psycopg2-binary
 python-dotenv
-pydantic-settings
+# pydantic-settings
