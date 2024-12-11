@@ -1,6 +1,6 @@
 from sqlmodel import Relationship
-from models.base_id_model import AutoIDNameModel
-from models.links_model import LinkTeamResource, LinkUserResource
+from server.models.base_id_model import AutoIDNameModel
+from server.models import LinkTeamResource, LinkUserResource
 
 
 class Resource(AutoIDNameModel, table=True):

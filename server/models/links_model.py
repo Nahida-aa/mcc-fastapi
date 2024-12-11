@@ -1,6 +1,6 @@
 from sqlmodel import Field, Relationship
-from api.models.base_id_model import TimestampMixin
-from api.models import Identity, Proj, Resource,  Tag, Team, User, UserPlatformInfo
+from server.models.base_id_model import TimestampMixin
+# from server.models import Identity, Proj, Resource,  Tag, Team, User, UserPlatformInfo
 
 class LinkUserTeam(TimestampMixin, table=True):
     user_id: int | None = Field(default=None, foreign_key="User.id", primary_key=True)

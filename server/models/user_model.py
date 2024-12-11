@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional, Sequence
 from sqlmodel import Field, Relationship
-from models.base_id_model import SQLModel, TimestampMixin
-from models.links_model import LinkUserIdentity, LinkUserPlatformInfoTag, LinkUserProj, LinkUserResource, LinkUserTeam
+from server.models.base_id_model import SQLModel, TimestampMixin
+from server.models.links_model import LinkUserIdentity, LinkUserPlatformInfoTag, LinkUserProj, LinkUserResource, LinkUserTeam
 
 
 class UserBase(SQLModel):
@@ -34,7 +34,10 @@ class UserPublic(UserBase):
     is_active: bool = True
     id_card_info: Optional["IDCardInfo"] = None
     platform_info: Optional["UserPlatformInfo"] = None
-
+class UsersPublic(SQLModel):
+    # data: list[UserPublic]
+    data: Sequence["UserPublic"]
+    count: int
 class User(UserBase, TimestampMixin, table=True):
     id: int | None = Field(default=None, primary_key=True)
     last_login: datetime | None = None

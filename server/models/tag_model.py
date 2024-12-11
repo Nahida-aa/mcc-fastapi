@@ -1,6 +1,6 @@
 from sqlmodel import Field, Relationship
-from models.base_id_model import SQLModel
-from models.links_model import LinkUserPlatformInfoTag
+from server.models.base_id_model import SQLModel
+from server.models import LinkUserPlatformInfoTag
 
 
 class Tag(SQLModel, table=True):

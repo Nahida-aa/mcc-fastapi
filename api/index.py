@@ -1,7 +1,7 @@
 import os
 import sys
 
-import uvicorn
+# import uvicorn
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_PATH)
@@ -12,10 +12,11 @@ from pydantic import BaseModel
 from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import Session, select
-from lib.database import create_db_and_tables
+from server.lib.database import create_db_and_tables
 # from api.routes.security import route as security_route
 # from api.routes.user import route as user_route
-from lib.database import  engine
+from server.lib.database import  engine
+from api import user as user_api
 
 # from api.apis.v1.api import api_router as api_router_v1
 
@@ -49,5 +50,4 @@ def hello_fast_api_post():
 # Add Routers
 # app.include_router(api_router_v1, prefix=settings.API_V1_STR)
 # app.include_router(api_router_v1, prefix="/api/v1/py")
-# app.include_router(user_api.router, prefix="/api/user", tags=["user"])
-# app.include_router(user_route.router)
+app.include_router(user_api.router)

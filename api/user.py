@@ -15,16 +15,18 @@
 # from app.models.role_model import Role
 # from app.utils.minio_client import MinioClient
 # from app.utils.resize_image import modify_image
-# from fastapi import (
-#     APIRouter,
-#     Body,
-#     Depends,
-#     File,
-#     Query,
-#     Response,
-#     UploadFile,
-#     status,
-# )
+from fastapi import (APIRouter,
+    Body,
+    Depends,
+    File,
+    Query,
+    Response,
+    UploadFile,
+    status,)
+from sqlmodel import col, delete, func, select
+
+from server.models.user_model import User, UsersPublic
+from server.deps import SessionDep
 # from app.schemas.media_schema import IMediaCreate
 # from app.schemas.response_schema import (
 #     IDeleteResponseBase,
@@ -45,11 +47,28 @@
 # from app.schemas.user_follow_schema import (
 #     IUserFollowReadCommon,
 # )
-# from fastapi_pagination import Params
+# from fastapi_pagination import Params #我认为不具有正规性
 # from sqlmodel import and_, select, col, or_, text
 
-# router = APIRouter()
+router = APIRouter(prefix="/api/py/user", tags=["user"])
 
+@router.get(
+    "/",
+    # dependencies=[Depends(get_current_active_superuser)],
+    response_model=UsersPublic,
+)
+def read_users(db: SessionDep, skip: int = 0, limit: int = 100):
+    """
+    Retrieve users.
+    """
+
+    count_statement = select(func.count()).select_from(User)
+    count = db.exec(count_statement).one()
+
+    statement = select(User).offset(skip).limit(limit)
+    users = db.exec(statement).all()
+
+    return UsersPublic(data=users, count=count) #
 
 # @router.get("/list")
 # async def read_users_list(
