@@ -58,8 +58,7 @@ router = APIRouter(prefix="/api/py/user", tags=["user"])
 @router.get(
     "s",
     # dependencies=[Depends(get_current_active_superuser)],
-    response_model=list[UserPublic],
-)
+    response_model=list[UserPublic],)
 def read_users(db: SessionDep, skip: int = 0, limit: int = 100):
     # count_statement = select(func.count()).select_from(User)
     # count = db.exec(count_statement).one()
@@ -69,60 +68,19 @@ def read_users(db: SessionDep, skip: int = 0, limit: int = 100):
     # return UsersPublic(data=users, count=count) #
     return users #
 
-def crud_create_user(db: Session, user: UserCreate):
-    # 创建新用户
-    db_user = User(
-        username=user.username,
-        email=user.email,
-        phone=user.phone,
-        age=user.age,
-        hashed_password=get_password_hash(user.password),
-        is_active=True,
-        is_superuser=False,
-        is_staff=False,
-    )
-    
-    # 处理 IDCardInfo
-    if user.id_card_info:
-        db_id_card_info = IDCardInfo(
-            id_card_number=user.id_card_info.id_card_number,
-            id_card_holder=user.id_card_info.id_card_holder,
-            is_real_name=user.id_card_info.is_real_name,
-            front_image_url=user.id_card_info.front_image_url,
-            back_image_url=user.id_card_info.back_image_url,
-            user=db_user
-        )
-        db.add(db_id_card_info)
-    
-    # 处理 UserPlatformInfo
-    if user.platform_info:
-        db_platform_info = UserPlatformInfo(
-            mc_experience=user.platform_info.mc_experience,
-            play_reason=user.platform_info.play_reason,
-            server_type=user.platform_info.server_type,
-            desired_partners=user.platform_info.desired_partners,
-            user=db_user
-        )
-        db.add(db_platform_info)
-    
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
 # @router.post("s", status_code=status.HTTP_201_CREATED)
 @router.post("s", response_model=UserPublic)
 def create_user(db: SessionDep,
     new_user: UserCreate
     # current_user: User = Depends(deps.get_current_user(required_roles=[IRoleEnum.admin]))
-)->UserPublic:
+):
     user = crud.user.get_by_username(username=new_user.username, db_session=db)
     if user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="User already exists",
         )
-    # user = crud.user.create(obj_in=new_user, db_session=session)
-    user = crud_create_user(db, new_user)
+    user = crud.user.create(obj_in=new_user, db_session=db)
     return user
 
 # @router.get("/list")
