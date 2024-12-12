@@ -41,8 +41,8 @@ class UserUpdate(SQLModel):
 class UserPublic(UserBase):
     id: int
     is_active: bool = True
-    id_card_info: Optional["IDCardInfo"] = None
-    platform_info: Optional["UserPlatformInfo"] = None
+    id_card_info: Optional["IDCardInfoBase"] = None
+    platform_info: Optional["UserPlatformInfoCreate"] = None
 class UsersPublic(SQLModel):
     # data: list[UserPublic]
     data: Sequence["UserPublic"]
