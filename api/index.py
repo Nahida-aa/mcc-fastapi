@@ -11,6 +11,7 @@ from fastapi import Depends, FastAPI
 from pydantic import BaseModel
 from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 from server.lib.database import create_db_and_tables
 # from api.routes.security import route as security_route
@@ -24,7 +25,20 @@ from api import user as user_api
 
 app = FastAPI(docs_url="/api/py/docs",redoc_url="/api/py/redoc", openapi_url="/api/py/openapi.json")
 
+origins = [
+    "https://127.0.0.1.tiangolo.com",
+    "https://127.0.0.1.tiangolo.com",
+    "https://127.0.0.1",
+    "https://127.0.0.1:8080",
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/api/py/helloFastApi")

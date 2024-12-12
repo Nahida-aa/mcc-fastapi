@@ -25,7 +25,7 @@ from fastapi import (APIRouter,
     status,)
 from sqlmodel import col, delete, func, select
 
-from server.models.user_model import User, UsersPublic
+from server.models.user_model import User, UserPublic, UsersPublic
 from server.deps import SessionDep
 # from app.schemas.media_schema import IMediaCreate
 # from app.schemas.response_schema import (
@@ -53,22 +53,19 @@ from server.deps import SessionDep
 router = APIRouter(prefix="/api/py/user", tags=["user"])
 
 @router.get(
-    "/",
+    "",
     # dependencies=[Depends(get_current_active_superuser)],
-    response_model=UsersPublic,
+    response_model=list[UserPublic],
 )
 def read_users(db: SessionDep, skip: int = 0, limit: int = 100):
-    """
-    Retrieve users.
-    """
-
-    count_statement = select(func.count()).select_from(User)
-    count = db.exec(count_statement).one()
+    # count_statement = select(func.count()).select_from(User)
+    # count = db.exec(count_statement).one()
 
     statement = select(User).offset(skip).limit(limit)
     users = db.exec(statement).all()
 
-    return UsersPublic(data=users, count=count) #
+    # return UsersPublic(data=users, count=count) #
+    return users #
 
 # @router.get("/list")
 # async def read_users_list(
