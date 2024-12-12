@@ -1,6 +1,8 @@
+from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship
 from server.models.base_id_model import TimestampMixin
-# from server.models import Identity, Proj, Resource,  Tag, Team, User, UserPlatformInfo
+if TYPE_CHECKING:
+    from server.models import Identity, Proj, Resource,  Tag, Team, User, UserPlatformInfo
 
 class LinkUserTeam(TimestampMixin, table=True):
     user_id: int | None = Field(default=None, foreign_key="User.id", primary_key=True)

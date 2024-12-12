@@ -1,6 +1,10 @@
 import os
 import sys
 
+from sqladmin import Admin, ModelView
+
+from server.models import User, UserPlatformInfo, Tag
+
 # import uvicorn
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,8 +30,7 @@ from api import user as user_api
 app = FastAPI(docs_url="/api/py/docs",redoc_url="/api/py/redoc", openapi_url="/api/py/openapi.json")
 
 origins = [
-    "https://127.0.0.1.tiangolo.com",
-    "https://127.0.0.1.tiangolo.com",
+    "https://127.0.0.1:3000",
     "https://127.0.0.1",
     "https://127.0.0.1:8080",
 ]
@@ -39,6 +42,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 
 @app.get("/api/py/helloFastApi")
@@ -64,4 +68,16 @@ def hello_fast_api_post():
 # Add Routers
 # app.include_router(api_router_v1, prefix=settings.API_V1_STR)
 # app.include_router(api_router_v1, prefix="/api/v1/py")
+
 app.include_router(user_api.router)
+
+admin = Admin(app, engine)
+class UserAdmin(ModelView, model=User):
+    column_list = [str(User.id), User.username, str(User.is_active), str(User.is_superuser)]
+class UserPlatformInfoAdmin(ModelView, model=UserPlatformInfo):
+    column_list = [str(UserPlatformInfo.id)]
+class TagAdmin(ModelView, model=Tag):
+    column_list = [str(Tag.id), Tag.name, Tag.description]
+admin.add_view(UserAdmin)
+admin.add_view(UserPlatformInfoAdmin)
+admin.add_view(TagAdmin)
