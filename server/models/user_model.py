@@ -42,11 +42,36 @@ class UserPublic(UserBase):
     id: int
     is_active: bool = True
     id_card_info: Optional["IDCardInfoBase"] = None
-    platform_info: Optional["UserPlatformInfoCreate"] = None
+    platform_info: Optional["UserPlatformInfoPublic"] = None
+
+    @classmethod
+    def from_orm(cls, user: "User"):
+        platform_info = user.platform_info
+        if platform_info:
+            platform_info_public = UserPlatformInfoPublic.from_orm(platform_info)
+
+        return cls(
+            id=user.id,  # type: ignore
+            username=user.username,
+            avatar=user.avatar,
+            nickname=user.nickname,
+            email=user.email,
+            phone=user.phone,
+            age=user.age,
+            is_active=user.is_active,
+            id_card_info=user.id_card_info,
+            platform_info=platform_info_public,
+        )
+
 class UsersPublic(SQLModel):
-    # data: list[UserPublic]
-    data: Sequence["UserPublic"]
+    data: list[UserPublic]
     count: int
+    @classmethod
+    def from_orm_list(cls, users: Sequence["User"], count: int):
+        return cls(
+            data=[UserPublic.from_orm(user) for user in users],
+            count=count
+        )
 class User(UserBase, TimestampMixin, table=True):
     id: int | None = Field(default=None, primary_key=True)
     last_login: datetime | None = None
@@ -71,7 +96,21 @@ class UserPlatformInfoBase(SQLModel):
     server_type: str = ""  # 服务器玩家 | 公益服 | 盈利服 | 多人竞技服 | 多人合作服。默认值为 '服务器玩家'
     desired_partners: str = ""  # 平台内想结识怎样的伙伴: 拒绝社交|服务器伙伴|同好建筑内容的伙伴|同好生存内容的伙伴|同好冒险内容的伙伴|同好科技内容的伙伴
 class UserPlatformInfoCreate(UserPlatformInfoBase):
-    favorite_content: Optional[List[str]] = None  # 添加 favorite_content 字段
+    favorite_content: list[str] = []
+class UserPlatformInfoPublic(UserPlatformInfoBase):
+    favorite_content: list[str] = []
+    @classmethod
+    def from_orm(cls, user_platform_info: "UserPlatformInfo"):
+        favorite_content = []
+        if favorite_content:
+            favorite_content = [link.tag.name for link in user_platform_info.favorite_content]
+        return cls(
+            mc_experience=user_platform_info.mc_experience,
+            play_reason=user_platform_info.play_reason,
+            server_type=user_platform_info.server_type,
+            desired_partners=user_platform_info.desired_partners,
+            favorite_content=favorite_content
+        )
 class UserPlatformInfo(UserPlatformInfoBase, table=True):  # 平台信息, 类似于调查问卷, 我认为易变
     id: int | None = Field(default=None, primary_key=True)
     user_id: int | None = Field(default=None, foreign_key="User.id")

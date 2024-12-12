@@ -10,19 +10,47 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         # db_session = db_session or super().get_db()
         statement = select(User).where(User.username == username)
         return db_session.exec(statement).one_or_none()
+    def get_by_email(self, *, email: str, db_session: Session) -> User|None:
+        statement = select(User).where(User.email == email)
+        return db_session.exec(statement).one_or_none()
     def create(self, *, obj_in: UserCreate, db_session: Session):
         # 创建新用户
-        db_obj = User.model_validate(obj_in, update={"hashed_password": get_password_hash(obj_in.password)})
+        db_obj = User(
+            username=obj_in.username,
+            email=obj_in.email,
+            phone=obj_in.phone,
+            age=obj_in.age,
+            hashed_password=get_password_hash(obj_in.password),
+            is_active=True,
+            is_superuser=False,
+            is_staff=False,
+        )
+        print(f"db_obj: {db_obj}")
         
         # 处理 IDCardInfo
         if obj_in.id_card_info:
-            db_id_card_info = IDCardInfo.model_validate(obj_in.id_card_info)
-            db_obj.id_card_info = db_id_card_info
+            db_id_card_info = IDCardInfo(
+                id_card_number=obj_in.id_card_info.id_card_number,
+                id_card_holder=obj_in.id_card_info.id_card_holder,
+                is_real_name=obj_in.id_card_info.is_real_name,
+                front_image_url=obj_in.id_card_info.front_image_url,
+                back_image_url=obj_in.id_card_info.back_image_url,
+                user=db_obj
+            )
+            db_session.add(db_id_card_info)
+            print(f"db_id_card_info: {db_id_card_info}")
         
         # 处理 UserPlatformInfo
         if obj_in.platform_info:
-            db_platform_info = UserPlatformInfo.model_validate(obj_in.platform_info)
-            db_obj.platform_info = db_platform_info
+            db_platform_info = UserPlatformInfo(
+                mc_experience=obj_in.platform_info.mc_experience,
+                play_reason=obj_in.platform_info.play_reason,
+                server_type=obj_in.platform_info.server_type,
+                desired_partners=obj_in.platform_info.desired_partners,
+                user=db_obj
+            )
+            db_session.add(db_platform_info)
+            print(f"db_platform_info: {db_platform_info}")
             
             # 处理 favorite_content
             if obj_in.platform_info.favorite_content:
@@ -35,6 +63,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
                         db_session.refresh(tag)
                     link = LinkUserPlatformInfoTag(user_platform_info=db_platform_info, tag=tag)
                     db_session.add(link)
+                print(f"link: {link}")
         
         db_session.add(db_obj)
         db_session.commit()
@@ -49,13 +78,12 @@ from server.core.security import get_password_hash
 
 def create_user(user_in: UserCreate, db: Session,):
     # 创建新用户
-    hashed_password = get_password_hash(user_in.password)
     db_user = User(
         username=user_in.username,
         email=user_in.email,
         phone=user_in.phone,
         age=user_in.age,
-        hashed_password=hashed_password,
+        hashed_password=get_password_hash(user_in.password),
         is_active=True,
         is_superuser=False,
         is_staff=False,

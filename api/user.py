@@ -28,7 +28,7 @@ from sqlmodel import Session, col, delete, func, select
 
 from server import crud
 from server.core.security import get_password_hash
-from server.models.user_model import IDCardInfo, User, UserCreate, UserPlatformInfo, UserPublic, UsersPublic
+from server.models.user_model import IDCardInfo, User, UserCreate, UserPlatformInfo, UserPlatformInfoPublic, UserPublic, UsersPublic
 from server.deps import SessionDep, user_deps
 # from app.schemas.media_schema import IMediaCreate
 # from app.schemas.response_schema import (
@@ -58,30 +58,38 @@ router = APIRouter(prefix="/api/py/user", tags=["user"])
 @router.get(
     "s",
     # dependencies=[Depends(get_current_active_superuser)],
-    response_model=list[UserPublic],)
-def read_users(db: SessionDep, skip: int = 0, limit: int = 100):
-    # count_statement = select(func.count()).select_from(User)
-    # count = db.exec(count_statement).one()
+    # response_model=list[UserPublic],
+)
+def read_users(db: SessionDep, skip: int = 0, limit: int = 100)->UsersPublic:
+    count_statement = select(func.count()).select_from(User)
+    count = db.exec(count_statement).one()
 
     statement = select(User).offset(skip).limit(limit)
     users = db.exec(statement).all()
-    # return UsersPublic(data=users, count=count) #
-    return users #
+    # return UsersPublic(data=[convert_user_to_public(u) for u in users], count=count) #
+    return UsersPublic.from_orm_list(users, count)
 
-# @router.post("s", status_code=status.HTTP_201_CREATED)
-@router.post("s", response_model=UserPublic)
+@router.post("s", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
 def create_user(db: SessionDep,
     new_user: UserCreate
     # current_user: User = Depends(deps.get_current_user(required_roles=[IRoleEnum.admin]))
-):
+)->UserPublic:
     user = crud.user.get_by_username(username=new_user.username, db_session=db)
     if user:
+        print("用户已存在")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="User already exists",
         )
+    user = crud.user.get_by_email(email=new_user.email, db_session=db)
+    if user:
+        print("邮箱已存在")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already exists",
+        )
     user = crud.user.create(obj_in=new_user, db_session=db)
-    return user
+    return UserPublic.from_orm(user)
 
 # @router.get("/list")
 # async def read_users_list(
