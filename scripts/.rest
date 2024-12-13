@@ -1,0 +1,9 @@
+# 使用访问令牌更换密码
+POST http://127.0.0.1:8000/api/py/user/change-password
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik5haGlkYS1hYSIsInNjb3BlcyI6W10sImV4cCI6MTczNDc4MDc3OX0.not6SX55YBSbZo0ei8Uq_nl7jBs3sJStMx4vjVq_BTc
+
+{
+  "current_password": "aa246369",
+  "new_password": "Aa246369"
+}

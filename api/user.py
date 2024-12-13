@@ -15,6 +15,9 @@
 # from app.models.role_model import Role
 # from app.utils.minio_client import MinioClient
 # from app.utils.resize_image import modify_image
+from datetime import timedelta
+from typing import Annotated
+from django.conf import settings
 from fastapi import (APIRouter,
     Body,
     Depends,
@@ -23,13 +26,18 @@ from fastapi import (APIRouter,
     Response,
     UploadFile,
     status,)
+from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import BaseModel
 from sqlmodel import Session, col, delete, func, select
 
 
 from server import crud
-from server.core.security import get_password_hash
-from server.models.user_model import IDCardInfo, User, UserCreate, UserPlatformInfo, UserPlatformInfoPublic, UserPublic, UsersPublic
+from server.core.security import create_access_token, create_refresh_token, get_password_hash
+from server.deps.security_dep import get_current_user
+from server.models.user_model import IDCardInfo, UpdatePassword, User, UserCreate, UserPlatformInfo, UserPlatformInfoPublic, UserPublic, UserUpdate, UsersPublic
+from server.models.security_model import Token
 from server.deps import SessionDep, user_deps
+from server.deps.user_deps import CheckUserExists
 # from app.schemas.media_schema import IMediaCreate
 # from app.schemas.response_schema import (
 #     IDeleteResponseBase,
@@ -71,25 +79,71 @@ def read_users(db: SessionDep, skip: int = 0, limit: int = 100)->UsersPublic:
 
 @router.post("s", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
 def create_user(db: SessionDep,
-    new_user: UserCreate
+    new_user: CheckUserExists
     # current_user: User = Depends(deps.get_current_user(required_roles=[IRoleEnum.admin]))
 )->UserPublic:
-    user = crud.user.get_by_username(username=new_user.username, db_session=db)
-    if user:
-        print("用户已存在")
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="User already exists",
-        )
-    user = crud.user.get_by_email(email=new_user.email, db_session=db)
-    if user:
-        print("邮箱已存在")
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Email already exists",
-        )
     user = crud.user.create(obj_in=new_user, db_session=db)
     return UserPublic.from_orm(user)
+
+class TokenWithUser(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str
+    user: UserPublic
+
+@router.post("/register", response_model=UserPublic)
+def register(db: SessionDep, new_user: CheckUserExists)->TokenWithUser:
+    user = crud.user.create(obj_in=new_user, db_session=db)
+    access_token = create_access_token(data={"username": user.username})
+    refresh_token = create_refresh_token(data={"username": user.username})
+    return TokenWithUser(access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=UserPublic.from_orm(user))
+
+@router.post("/login")
+def login( db: SessionDep,
+          username: str = Body(...),
+          password: str = Body(...)
+)->TokenWithUser:
+    """
+    User login, get an access token and refresh token
+    """
+    user = crud.user.authenticate_user(username=username, password=password, db_session=db)
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token = create_access_token(data={"username": user.username})
+    refresh_token = create_refresh_token(data={"username": user.username})
+    return TokenWithUser(access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=UserPublic.from_orm(user))
+
+@router.post("/change-password", response_model=UserPublic)
+def change_password(
+    body: UpdatePassword,
+    db: SessionDep,
+    current_user: User = Depends(get_current_user)
+) -> UserPublic:
+    updated_user = crud.user.change_password(
+        db_session=db,
+        user=current_user,
+        current_password=body.current_password,
+        new_password=body.new_password
+    )
+    return UserPublic.from_orm(updated_user)
+
+@router.patch("/")
+def update_user(
+    db: SessionDep,
+    user: UserUpdate,
+    current_user: User = Depends(get_current_user)
+)->UserPublic:
+    """
+    Update user
+    """
+    updated_user = crud.user.update(db_session=db, obj_current=current_user, obj_new=user)
+    return UserPublic.from_orm(updated_user)
 
 # @router.get("/list")
 # async def read_users_list(

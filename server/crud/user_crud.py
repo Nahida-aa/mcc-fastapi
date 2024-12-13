@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlmodel import Session, select
-from server.core.security import get_password_hash
+from server.core.security import get_password_hash, verify_password
 from server.crud.base_crud import CRUDBase
 from server.models.user_model import User, UserCreate, UserUpdate
 from fastapi import HTTPException, Path, status
@@ -69,7 +69,24 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db_session.commit()
         db_session.refresh(db_obj)
         return db_obj
+    def authenticate_user(self, *, username: str, password: str, db_session: Session):
+        print(f"authenticate_user::username: {username}, password: {password}")
+        user = self.get_by_username(username=username, db_session=db_session)
+        print(f"authenticate_user:成功拿到用户:user: {user}")
+        if not user:
+            return False
+        if not verify_password(password, user.hashed_password):
+            return False
+        return user
     
+    def change_password(self, *, db_session: Session, user: User, current_password: str, new_password: str) -> User:
+        if not verify_password(current_password, user.hashed_password):
+            raise HTTPException(status_code=400, detail="Current password is incorrect")
+        user.hashed_password = get_password_hash(new_password)
+        db_session.add(user)
+        db_session.commit()
+        db_session.refresh(user)
+        return user
 user = CRUDUser(User)
 
 from server.models.user_model import User, UserCreate, IDCardInfo, UserPlatformInfo, LinkUserPlatformInfoTag

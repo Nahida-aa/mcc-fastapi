@@ -38,7 +38,9 @@ class UserUpdate(SQLModel):
     password: str | None = None
     id_card_info: Optional["IDCardInfoBase"] = None
     platform_info: Optional["UserPlatformInfoUpdate"] = None
-
+class UpdatePassword(SQLModel):
+    current_password: str = Field(min_length=8, max_length=40)
+    new_password: str = Field(min_length=8, max_length=40)
 class UserPublic(UserBase):
     id: int
     is_active: bool = True
