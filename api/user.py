@@ -90,7 +90,7 @@ class TokenWithUser(BaseModel):
     token_type: str
     user: UserPublic
 
-@router.post("/register", response_model=UserPublic)
+@router.post("/register")
 def register(db: SessionDep, new_user: CheckUserExists)->TokenWithUser:
     user = crud.user.create(obj_in=new_user, db_session=db)
     access_token = create_access_token(data={"username": user.username})
