@@ -4,6 +4,7 @@ import sys
 from sqladmin import Admin, ModelView
 
 from server.models import User, UserPlatformInfo, Tag
+from server.models.links_model import LinkUserPlatformInfoTag
 
 # import uvicorn
 
@@ -78,6 +79,9 @@ class UserPlatformInfoAdmin(ModelView, model=UserPlatformInfo):
     column_list = [str(UserPlatformInfo.id)]
 class TagAdmin(ModelView, model=Tag):
     column_list = [str(Tag.id), Tag.name, Tag.description]
+class LinkUserPlatformInfoTagAdmin(ModelView, model=LinkUserPlatformInfoTag):
+    column_list = [str(LinkUserPlatformInfoTag.user_platform_info_id), str(LinkUserPlatformInfoTag.tag_id)]
 admin.add_view(UserAdmin)
 admin.add_view(UserPlatformInfoAdmin)
 admin.add_view(TagAdmin)
+admin.add_view(LinkUserPlatformInfoTagAdmin)

@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List, Optional, Sequence
+from pydantic import BaseModel
 from sqlmodel import Field, Relationship
 from server.models.base_id_model import SQLModel, TimestampMixin
 from server.models.links_model import LinkUserIdentity, LinkUserPlatformInfoTag, LinkUserProj, LinkUserResource, LinkUserTeam
@@ -36,7 +37,7 @@ class UserUpdate(SQLModel):
     age: int | None = None
     password: str | None = None
     id_card_info: Optional["IDCardInfoBase"] = None
-    platform_info: Optional["UserPlatformInfoBase"] = None
+    platform_info: Optional["UserPlatformInfoUpdate"] = None
 
 class UserPublic(UserBase):
     id: int
@@ -49,6 +50,7 @@ class UserPublic(UserBase):
         platform_info = user.platform_info
         if platform_info:
             platform_info_public = UserPlatformInfoPublic.from_orm(platform_info)
+            # print(f"{user.username}有平台信息: {platform_info_public}")
 
         return cls(
             id=user.id,  # type: ignore
@@ -102,7 +104,7 @@ class UserPlatformInfoPublic(UserPlatformInfoBase):
     @classmethod
     def from_orm(cls, user_platform_info: "UserPlatformInfo"):
         favorite_content = []
-        if favorite_content:
+        if user_platform_info.favorite_content:
             favorite_content = [link.tag.name for link in user_platform_info.favorite_content]
         return cls(
             mc_experience=user_platform_info.mc_experience,
@@ -111,6 +113,12 @@ class UserPlatformInfoPublic(UserPlatformInfoBase):
             desired_partners=user_platform_info.desired_partners,
             favorite_content=favorite_content
         )
+class UserPlatformInfoUpdate(BaseModel):
+    mc_experience: str | None = None
+    play_reason: str | None = None
+    server_type: str | None = None
+    desired_partners: str | None = None
+    favorite_content: list[str] | None = None
 class UserPlatformInfo(UserPlatformInfoBase, table=True):  # 平台信息, 类似于调查问卷, 我认为易变
     id: int | None = Field(default=None, primary_key=True)
     user_id: int | None = Field(default=None, foreign_key="User.id")
