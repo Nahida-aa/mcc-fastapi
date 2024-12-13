@@ -17,7 +17,6 @@
 # from app.utils.resize_image import modify_image
 from datetime import timedelta
 from typing import Annotated
-from django.conf import settings
 from fastapi import (APIRouter,
     Body,
     Depends,
