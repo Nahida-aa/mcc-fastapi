@@ -1,14 +1,16 @@
+from typing import Any
 from fastapi import HTTPException
 from sqlmodel import Session, select
 from server.core.security import get_password_hash, verify_password
 from server.crud.base_crud import CRUDBase
-from server.models.user_model import User, UserCreate, UserUpdate
+from server.models.user_model import IDCardInfoUpdate, User, UserCreate, UserPlatformInfoUpdate, UserUpdate
 from fastapi import HTTPException, Path, status
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def get_by_username(self, *, username: str, db_session: Session) -> User|None:
         # db_session = db_session or super().get_db()
         statement = select(User).where(User.username == username)
+        print(f"CRUDUser::get_by_username::statement: {statement}")
         return db_session.exec(statement).one_or_none()
     def get_by_email(self, *, email: str, db_session: Session) -> User|None:
         statement = select(User).where(User.email == email)
@@ -90,6 +92,44 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 user = CRUDUser(User)
 
 from server.models.user_model import User, UserCreate, IDCardInfo, UserPlatformInfo, LinkUserPlatformInfoTag
+class CRUDIDCardInfo(CRUDBase[IDCardInfo, IDCardInfo, IDCardInfoUpdate]):
+    pass
+id_card_info = CRUDIDCardInfo(IDCardInfo)
+
+class CRUDUserPlatformInfo(CRUDBase[UserPlatformInfo, UserPlatformInfo, UserPlatformInfoUpdate]):
+    def update_with_favorite_content(self, *, obj_current: UserPlatformInfo, obj_new: UserPlatformInfoUpdate, db_session: Session) -> UserPlatformInfo:
+        # 更新其他字段
+        if obj_new.mc_experience is not None:
+            obj_current.mc_experience = obj_new.mc_experience
+        if obj_new.play_reason is not None:
+            obj_current.play_reason = obj_new.play_reason
+        if obj_new.server_type is not None:
+            obj_current.server_type = obj_new.server_type
+        if obj_new.desired_partners is not None:
+            obj_current.desired_partners = obj_new.desired_partners
+        
+        # 更新 favorite_content
+        if obj_new.favorite_content is not None:
+            # 清除现有的 favorite_content
+            obj_current.favorite_content.clear()
+            db_session.commit()
+            # 添加新的 favorite_content
+            for tag_name in obj_new.favorite_content:
+                tag = db_session.exec(select(Tag).where(Tag.name == tag_name)).one_or_none()
+                if not tag:
+                    tag = Tag(name=tag_name)
+                    db_session.add(tag)
+                    db_session.commit()
+                    db_session.refresh(tag)
+                link = LinkUserPlatformInfoTag(user_platform_info=obj_current, tag=tag)
+                db_session.add(link)
+        
+        db_session.commit()
+        db_session.refresh(obj_current)
+        return obj_current
+    
+user_platform_info = CRUDUserPlatformInfo(UserPlatformInfo)
+
 from server.models.tag_model import Tag
 from server.core.security import get_password_hash
 

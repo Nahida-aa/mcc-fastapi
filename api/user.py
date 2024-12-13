@@ -33,8 +33,8 @@ from sqlmodel import Session, col, delete, func, select
 from server import crud
 from server.core.security import create_access_token, create_refresh_token, get_password_hash
 from server.deps.security_dep import get_current_user
-from server.models.user_model import IDCardInfo, UpdatePassword, User, UserCreate, UserPlatformInfo, UserPlatformInfoPublic, UserPublic, UserUpdate, UsersPublic
-from server.models.security_model import Token
+from server.models.user_model import IDCardInfo, IDCardInfoUpdate, UpdatePassword, User, UserCreate, UserPlatformInfo, UserPlatformInfoPublic, UserPlatformInfoUpdate, UserPublic, UserUpdate, UsersPublic
+from server.models.security_model import Token, TokenWithUser
 from server.deps import SessionDep, user_deps
 from server.deps.user_deps import CheckUserExists
 # from app.schemas.media_schema import IMediaCreate
@@ -62,8 +62,10 @@ from server.deps.user_deps import CheckUserExists
 
 router = APIRouter(prefix="/api/py/user", tags=["user"])
 
-@router.get(
-    "s",
+@router.get("")
+def read_user(current_user: User = Depends(get_current_user))->UserPublic:
+    return UserPublic.from_orm(current_user)
+@router.get("s",
     # dependencies=[Depends(get_current_active_superuser)],
     # response_model=list[UserPublic],
 )
@@ -84,39 +86,11 @@ def create_user(db: SessionDep,
     user = crud.user.create(obj_in=new_user, db_session=db)
     return UserPublic.from_orm(user)
 
-class TokenWithUser(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str
-    user: UserPublic
 
-@router.post("/register")
-def register(db: SessionDep, new_user: CheckUserExists)->TokenWithUser:
-    user = crud.user.create(obj_in=new_user, db_session=db)
-    access_token = create_access_token(data={"username": user.username})
-    refresh_token = create_refresh_token(data={"username": user.username})
-    return TokenWithUser(access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=UserPublic.from_orm(user))
 
-@router.post("/login")
-def login( db: SessionDep,
-          username: str = Body(...),
-          password: str = Body(...)
-)->TokenWithUser:
-    """
-    User login, get an access token and refresh token
-    """
-    user = crud.user.authenticate_user(username=username, password=password, db_session=db)
-    
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    access_token = create_access_token(data={"username": user.username})
-    refresh_token = create_refresh_token(data={"username": user.username})
-    return TokenWithUser(access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=UserPublic.from_orm(user))
+
+
+
 
 @router.post("/change-password", response_model=UserPublic)
 def change_password(
@@ -132,7 +106,7 @@ def change_password(
     )
     return UserPublic.from_orm(updated_user)
 
-@router.patch("/")
+@router.patch("")
 def update_user(
     db: SessionDep,
     user: UserUpdate,
@@ -143,6 +117,36 @@ def update_user(
     """
     updated_user = crud.user.update(db_session=db, obj_current=current_user, obj_new=user)
     return UserPublic.from_orm(updated_user)
+
+@router.patch("/idcard")
+def update_user_idcard(
+    db: SessionDep,
+    idcard_update: IDCardInfoUpdate,
+    current_user: User = Depends(get_current_user)
+) -> IDCardInfo:
+    id_card_info = crud.id_card_info.update(db_session=db, obj_current=current_user.id_card_info, obj_new=idcard_update) # type: ignore
+    return id_card_info
+
+@router.patch("/platform")
+def update_user_platform(
+    db: SessionDep,
+    platform_update: UserPlatformInfoUpdate,
+    current_user: User = Depends(get_current_user)
+) -> UserPlatformInfoPublic:
+    print(f"update_user_platform:: input: {platform_update}")
+    platform_info = crud.user_platform_info.update_with_favorite_content(db_session=db, obj_current=current_user.platform_info, obj_new=platform_update) # type: ignore
+    return UserPlatformInfoPublic.from_orm(platform_info)
+#     print(f"update_user_platform:: input: {platform_update}")
+#     if current_user.platform_info:
+#         current_user.platform_info.mc_experience = platform_update.mc_experience
+#         current_user.platform_info.play_reason = platform_update.play_reason
+#         current_user.platform_info.server_type = platform_update.server_type
+#         current_user.platform_info.desired_partners = platform_update.desired_partners
+#         current_user.platform_info.favorite_content = platform_update.favorite_content
+#         db.add(current_user.platform_info)
+#         db.commit()
+#         db.refresh(current_user.platform_info)
+#     return UserPublic.from_orm(current_user)
 
 # @router.get("/list")
 # async def read_users_list(

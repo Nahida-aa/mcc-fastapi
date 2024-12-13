@@ -1,1 +1,1 @@
-from .user_crud import user
+from .user_crud import user, id_card_info, user_platform_info

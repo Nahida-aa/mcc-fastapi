@@ -8,7 +8,8 @@ from server import crud
 from server.core.security import create_access_token, create_refresh_token, decode_token
 from server.models import User, UserPlatformInfo, Tag
 from server.models.links_model import LinkUserPlatformInfoTag
-from server.models.security_model import Token
+from server.models.security_model import Token, TokenWithUser
+from server.models.user_model import UserPublic
 
 # import uvicorn
 
@@ -16,7 +17,7 @@ BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_PATH)
 print(BASE_PATH)
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Body, Depends, FastAPI, HTTPException, status
 from pydantic import BaseModel
 from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -27,7 +28,7 @@ from server.lib.database import  engine
 from api import user as user_api
 from server.core.config import settings
 from server.deps import SessionDep, get_db
-
+from server.deps.user_deps import CheckUserExists
 # from api.apis.v1.api import api_router as api_router_v1
 
 
@@ -36,6 +37,7 @@ app = FastAPI(docs_url="/api/py/docs",redoc_url="/api/py/redoc", openapi_url="/a
 
 origins = [
     "https://127.0.0.1:3000",
+    "http://127.0.0.1:3000",
     "https://127.0.0.1",
     "https://127.0.0.1:8080",
 ]
@@ -93,6 +95,33 @@ def refresh_token(refresh_token: str) -> RefreshTokenResponse:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
+
+@app.post("/api/py/login")
+def login( db: SessionDep,
+          username: str = Body(...),
+          password: str = Body(...)
+)->TokenWithUser:
+    """
+    User login, get an access token and refresh token
+    """
+    user = crud.user.authenticate_user(username=username, password=password, db_session=db)
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token = create_access_token(data={"username": user.username})
+    refresh_token = create_refresh_token(data={"username": user.username})
+    return TokenWithUser(access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=UserPublic.from_orm(user))
+
+@app.post("/api/py/register")
+def register(db: SessionDep, new_user: CheckUserExists)->TokenWithUser:
+    user = crud.user.create(obj_in=new_user, db_session=db)
+    access_token = create_access_token(data={"username": user.username})
+    refresh_token = create_refresh_token(data={"username": user.username})
+    return TokenWithUser(access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=UserPublic.from_orm(user))
 # def select_users():
 #     # with Session(engine) as session:
 #     #     users = session.exec(select(User)).all()

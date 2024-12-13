@@ -11,6 +11,12 @@ class IDCardInfoBase(SQLModel):
     is_real_name: bool = False
     front_image_url: str | None = None
     back_image_url: str | None = None
+class IDCardInfoUpdate(SQLModel):
+    id_card_number: str | None = None
+    id_card_holder: str | None = None
+    is_real_name: bool | None = None
+    front_image_url: str | None = None
+    back_image_url: str | None = None
 class IDCardInfo(IDCardInfoBase, table=True):  # 身份证信息, 一对一关系, 主表不用存数据
     id: int | None = Field(default=None, primary_key=True)
     user_id: int | None = Field(default=None, foreign_key="User.id")
@@ -35,7 +41,9 @@ class UserUpdate(SQLModel):
     email: str | None = None
     phone: str | None = None
     age: int | None = None
-    password: str | None = None
+    # password: str | None = None
+    
+class UserUpdateWithAll(UserUpdate):
     id_card_info: Optional["IDCardInfoBase"] = None
     platform_info: Optional["UserPlatformInfoUpdate"] = None
 class UpdatePassword(SQLModel):
@@ -104,7 +112,7 @@ class UserPlatformInfoCreate(UserPlatformInfoBase):
 class UserPlatformInfoPublic(UserPlatformInfoBase):
     favorite_content: list[str] = []
     @classmethod
-    def from_orm(cls, user_platform_info: "UserPlatformInfo"):
+    def from_orm(cls, user_platform_info: "UserPlatformInfo")->"UserPlatformInfoPublic":
         favorite_content = []
         if user_platform_info.favorite_content:
             favorite_content = [link.tag.name for link in user_platform_info.favorite_content]
@@ -115,12 +123,14 @@ class UserPlatformInfoPublic(UserPlatformInfoBase):
             desired_partners=user_platform_info.desired_partners,
             favorite_content=favorite_content
         )
-class UserPlatformInfoUpdate(BaseModel):
+class UserPlatformInfoUpdate(SQLModel):
     mc_experience: str | None = None
     play_reason: str | None = None
     server_type: str | None = None
     desired_partners: str | None = None
     favorite_content: list[str] | None = None
+    
+
 class UserPlatformInfo(UserPlatformInfoBase, table=True):  # 平台信息, 类似于调查问卷, 我认为易变
     id: int | None = Field(default=None, primary_key=True)
     user_id: int | None = Field(default=None, foreign_key="User.id")

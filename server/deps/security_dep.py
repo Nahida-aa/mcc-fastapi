@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from fastapi import Depends, HTTPException, Security, status
 import jwt
 from pydantic import ValidationError
+from pyparsing import C
 
 from server import crud
 from server.core.security import decode_token
@@ -36,6 +37,7 @@ async def get_current_user(security_scopes: SecurityScopes, token: Annotated[str
     try:
         payload = decode_token(token)
         username = payload.get("username")
+        print(f"获得当前用户::username: {username}")
         if username is None:
             raise credentials_exception
         token_scopes = payload.get("scopes", [])
@@ -43,6 +45,7 @@ async def get_current_user(security_scopes: SecurityScopes, token: Annotated[str
     except (jwt.InvalidTokenError, ValidationError):
         raise credentials_exception
     user = crud.user.get_by_username(username=token_data.username, db_session=db_session)
+    print(f"获得当前用户::user: {user}")
     if user is None:
         raise credentials_exception
     for scope in security_scopes.scopes:
@@ -53,3 +56,5 @@ async def get_current_user(security_scopes: SecurityScopes, token: Annotated[str
                 headers={"WWW-Authenticate": authenticate_value},
             )
     return user
+
+# CurrentUser = Annotated[Security(get_current_user), Depends(oauth2_scheme)]
