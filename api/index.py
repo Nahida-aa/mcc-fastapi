@@ -23,6 +23,7 @@ from server.lib.database import create_db_and_tables
 # from api.routes.user import route as user_route
 from server.lib.database import  engine
 from api import user as user_api
+from server.core.config import settings
 
 # from api.apis.v1.api import api_router as api_router_v1
 
@@ -52,6 +53,9 @@ def hello_fast_api():
 @app.post("/api/py/helloFastApiPost")
 def hello_fast_api_post():
     return {"message": "Hello from FastAPI"}
+@app.get("/api/py/env")
+def test_env():
+    return {"message": settings.ENCRYPT_KEY}
 
 # def select_users():
 #     # with Session(engine) as session:
