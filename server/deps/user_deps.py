@@ -1,6 +1,5 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException, Path, status
-from pyparsing import C
 from server.models.user_model import UserCreate
 from server import crud
 from sqlmodel import Session, select
