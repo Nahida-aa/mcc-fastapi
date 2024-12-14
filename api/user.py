@@ -66,6 +66,12 @@ router = APIRouter(prefix="/api/py/user", tags=["user"])
 @router.get("")
 def read_user(current_user: User = Depends(get_current_user))->UserPublic:
     return UserPublic.from_orm(current_user)
+@router.get("/{username}")
+def read_user_by_username(username: str, db: SessionDep)->UserPublic:
+    user = crud.user.get_by_username(db_session=db, username=username)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return UserPublic.from_orm(user)
 @router.get("s",
     # dependencies=[Depends(get_current_active_superuser)],
     # response_model=list[UserPublic],
