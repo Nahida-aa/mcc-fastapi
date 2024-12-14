@@ -1,6 +1,6 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException, Path, status
-from server.models.user_model import UserCreate
+from server.schemas.user_schema import UserCreate
 from server import crud
 from sqlmodel import Session, select
 from server.deps import SessionDep, get_db

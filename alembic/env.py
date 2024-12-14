@@ -17,13 +17,13 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-from api.lib.database import SQLALCHEMY_DATABASE_URL
+from server.lib.database import SQLALCHEMY_DATABASE_URL
 config.set_main_option('sqlalchemy.url', SQLALCHEMY_DATABASE_URL)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from api.routes.user import models
-from api.models import *
+from server.models import *
 # target_metadata = mymodel.Base.metadata
 # target_metadata = models.Base.metadata
 target_metadata = SQLModel.metadata

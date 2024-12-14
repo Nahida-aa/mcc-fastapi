@@ -9,7 +9,7 @@ from server.core.security import create_access_token, create_refresh_token, deco
 from server.models import User, UserPlatformInfo, Tag
 from server.models.links_model import LinkUserPlatformInfoTag
 from server.models.security_model import Token, TokenWithUser
-from server.models.user_model import UserPublic
+from server.schemas.user_schema import UserPublic
 
 # import uvicorn
 

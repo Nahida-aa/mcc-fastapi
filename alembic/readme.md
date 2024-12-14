@@ -20,7 +20,7 @@ alembic current
 alembic revision --autogenerate -m "1"
 ```
 
-#### 生成 err
+#### err
 
 ##### Target database is not up to date 目标数据库不是最新的
 

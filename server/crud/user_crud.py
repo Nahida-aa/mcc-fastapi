@@ -3,7 +3,8 @@ from fastapi import HTTPException
 from sqlmodel import Session, select
 from server.core.security import get_password_hash, verify_password
 from server.crud.base_crud import CRUDBase
-from server.models.user_model import IDCardInfoUpdate, User, UserCreate, UserPlatformInfoUpdate, UserUpdate
+from server.models.user_model import User
+from server.schemas.user_schema import IDCardInfoUpdate, UserCreate, UserPlatformInfoUpdate, UserUpdate
 from fastapi import HTTPException, Path, status
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
@@ -91,7 +92,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return user
 user = CRUDUser(User)
 
-from server.models.user_model import User, UserCreate, IDCardInfo, UserPlatformInfo, LinkUserPlatformInfoTag
+from server.models.user_model import User, IDCardInfo, UserPlatformInfo, LinkUserPlatformInfoTag
 class CRUDIDCardInfo(CRUDBase[IDCardInfo, IDCardInfo, IDCardInfoUpdate]):
     pass
 id_card_info = CRUDIDCardInfo(IDCardInfo)

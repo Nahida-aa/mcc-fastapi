@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from server.models.user_model import UserPublic
+from server.schemas.user_schema import UserPublic
 
 
 class TokenWithUser(BaseModel):

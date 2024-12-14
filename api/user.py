@@ -33,7 +33,8 @@ from sqlmodel import Session, col, delete, func, select
 from server import crud
 from server.core.security import create_access_token, create_refresh_token, get_password_hash
 from server.deps.security_dep import get_current_user
-from server.models.user_model import IDCardInfo, IDCardInfoUpdate, UpdatePassword, User, UserCreate, UserPlatformInfo, UserPlatformInfoPublic, UserPlatformInfoUpdate, UserPublic, UserUpdate, UsersPublic
+from server.models.user_model import IDCardInfo,  User,  UserPlatformInfo
+from server.schemas.user_schema import IDCardInfoUpdate, UpdatePassword, UserCreate, UserPlatformInfoPublic, UserPlatformInfoUpdate, UserPublic, UserUpdate, UsersPublic
 from server.models.security_model import Token, TokenWithUser
 from server.deps import SessionDep, user_deps
 from server.deps.user_deps import CheckUserExists
@@ -85,12 +86,6 @@ def create_user(db: SessionDep,
 )->UserPublic:
     user = crud.user.create(obj_in=new_user, db_session=db)
     return UserPublic.from_orm(user)
-
-
-
-
-
-
 
 @router.put("/password", response_model=UserPublic)
 def change_password(
@@ -401,7 +396,23 @@ def update_user_platform(
 #         user=current_user, target_user=target_user
 #     )
 #     return create_response(data=new_user_follow)
+@router.post("/follow/{target_user_id}")
+def follow_user(target_user_id: int, db: SessionDep, current_user: User = Depends(get_current_user)):
+    followed_user = db.get(User, target_user_id)
+    if not followed_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    followed_user = crud.link_user_follow.follow(follower=current_user, followed=followed_user, db_session=db)
+    return followed_user
 
+@router.delete("/follow/{target_user_id}")
+def unfollow_user(target_user_id: int, db: SessionDep, current_user: User = Depends(get_current_user)):
+    followed_user = db.get(User, target_user_id)
+    if not followed_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    followed_user =crud.link_user_follow.unfollow(follower=current_user, followed=followed_user, db_session=db)
+    return followed_user
 
 # @router.delete("/following/{target_user_id}")
 # async def unfollowing_a_user_by_id(

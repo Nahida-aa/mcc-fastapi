@@ -1,8 +1,27 @@
+from datetime import datetime
 from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship
-from server.models.base_id_model import TimestampMixin
+from sqlalchemy.orm import relationship
+from server.models.base_id_model import SQLModel, TimestampMixin
 if TYPE_CHECKING:
     from server.models import Identity, Proj, Resource,  Tag, Team, User, UserPlatformInfo
+
+class LinkUserFollow(SQLModel, table=True): # follower 关注 followed
+    follower_id: int = Field(foreign_key="User.id", primary_key=True)
+    followed_id: int = Field(foreign_key="User.id", primary_key=True)
+    created_at: datetime = Field(default_factory=datetime.now)
+    # follower: "User" = Relationship(back_populates="following_links")
+    # follower: "User" = Relationship(back_populates="following_links", sa_relationship_kwargs={"foreign_keys": [follower_id]})
+    # followed: "User" = Relationship(back_populates="follower_links")
+    # followed: "User" = Relationship(back_populates="follower_links", sa_relationship_kwargs={"foreign_keys": [followed_id]})
+
+class LinkTeamFollow(SQLModel, table=True):
+    user_id: int = Field(foreign_key="User.id", primary_key=True)
+    team_id: int = Field(foreign_key="Team.id", primary_key=True)
+    created_at: datetime = Field(default_factory=datetime.now)
+    
+    user: "User" = Relationship(back_populates="team_following_links")
+    team: "Team" = Relationship(back_populates="follower_links")
 
 class LinkUserTeam(TimestampMixin, table=True):
     user_id: int | None = Field(default=None, foreign_key="User.id", primary_key=True)
