@@ -3,7 +3,6 @@ from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from fastapi import Depends, HTTPException, Security, status
 import jwt
 from pydantic import ValidationError
-from pyparsing import C
 
 from server import crud
 from server.core.security import decode_token
