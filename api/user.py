@@ -92,7 +92,7 @@ def create_user(db: SessionDep,
 
 
 
-@router.post("/change-password", response_model=UserPublic)
+@router.put("/password", response_model=UserPublic)
 def change_password(
     body: UpdatePassword,
     db: SessionDep,
@@ -136,17 +136,6 @@ def update_user_platform(
     print(f"update_user_platform:: input: {platform_update}")
     platform_info = crud.user_platform_info.update_with_favorite_content(db_session=db, obj_current=current_user.platform_info, obj_new=platform_update) # type: ignore
     return UserPlatformInfoPublic.from_orm(platform_info)
-#     print(f"update_user_platform:: input: {platform_update}")
-#     if current_user.platform_info:
-#         current_user.platform_info.mc_experience = platform_update.mc_experience
-#         current_user.platform_info.play_reason = platform_update.play_reason
-#         current_user.platform_info.server_type = platform_update.server_type
-#         current_user.platform_info.desired_partners = platform_update.desired_partners
-#         current_user.platform_info.favorite_content = platform_update.favorite_content
-#         db.add(current_user.platform_info)
-#         db.commit()
-#         db.refresh(current_user.platform_info)
-#     return UserPublic.from_orm(current_user)
 
 # @router.get("/list")
 # async def read_users_list(

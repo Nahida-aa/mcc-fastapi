@@ -129,7 +129,6 @@ class UserPlatformInfoUpdate(SQLModel):
     server_type: str | None = None
     desired_partners: str | None = None
     favorite_content: list[str] | None = None
-    
 
 class UserPlatformInfo(UserPlatformInfoBase, table=True):  # 平台信息, 类似于调查问卷, 我认为易变
     id: int | None = Field(default=None, primary_key=True)
