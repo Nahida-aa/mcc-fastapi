@@ -33,6 +33,7 @@ from sqlmodel import Session, col, delete, func, select
 from server import crud
 from server.core.security import create_access_token, create_refresh_token, get_password_hash
 from server.deps.security_dep import get_current_user
+from server.models.links_model import LinkUserFollow
 from server.models.user_model import IDCardInfo,  User,  UserPlatformInfo
 from server.schemas.user_schema import IDCardInfoUpdate, UpdatePassword, UserCreate, UserPlatformInfoPublic, UserPlatformInfoUpdate, UserPublic, UserUpdate, UsersPublic
 from server.models.security_model import Token, TokenWithUser
@@ -72,6 +73,7 @@ def read_user_by_username(username: str, db: SessionDep)->UserPublic:
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return UserPublic.from_orm(user)
+
 @router.get("s",
     # dependencies=[Depends(get_current_active_superuser)],
     # response_model=list[UserPublic],
@@ -402,8 +404,17 @@ def update_user_platform(
 #         user=current_user, target_user=target_user
 #     )
 #     return create_response(data=new_user_follow)
+@router.get("/is_following/{target_user_id}")
+def is_following_user(target_user_id: int, db: SessionDep, current_user: User = Depends(get_current_user))-> LinkUserFollow|None :
+    followed_user = db.get(User, target_user_id)
+    if not followed_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    is_following = db.exec(select(LinkUserFollow).where(LinkUserFollow.follower_id == current_user.id).where(LinkUserFollow.followed_id == target_user_id)).first()
+    return is_following
+
 @router.post("/follow/{target_user_id}")
-def follow_user(target_user_id: int, db: SessionDep, current_user: User = Depends(get_current_user)):
+def follow_user(target_user_id: int, db: SessionDep, current_user: User = Depends(get_current_user))->User:
     followed_user = db.get(User, target_user_id)
     if not followed_user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -412,7 +423,7 @@ def follow_user(target_user_id: int, db: SessionDep, current_user: User = Depend
     return followed_user
 
 @router.delete("/follow/{target_user_id}")
-def unfollow_user(target_user_id: int, db: SessionDep, current_user: User = Depends(get_current_user)):
+def unfollow_user(target_user_id: int, db: SessionDep, current_user: User = Depends(get_current_user))->User:
     followed_user = db.get(User, target_user_id)
     if not followed_user:
         raise HTTPException(status_code=404, detail="User not found")

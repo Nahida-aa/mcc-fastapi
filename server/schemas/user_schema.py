@@ -47,6 +47,8 @@ class UserPublic(UserBase):
             phone=user.phone,
             age=user.age,
             is_active=user.is_active,
+            followers_count=user.followers_count,
+            following_count=user.following_count,
             id_card_info=user.id_card_info,
             platform_info=platform_info_public,
         )

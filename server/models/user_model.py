@@ -24,6 +24,8 @@ class UserBase(SQLModel):
     email: str = Field(default="", index=True, unique=True)
     phone: str = ""  # 手机号, 通过逻辑来实现必填
     age: int | None = Field(default=None, index=True)
+    followers_count: int = 0
+    following_count: int = 0
 
 class User(UserBase, TimestampMixin, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -38,8 +40,6 @@ class User(UserBase, TimestampMixin, table=True):
     
     home: Optional["Home"] = Relationship(back_populates="user", sa_relationship_kwargs={"uselist": False})
 
-    followers_count: int = 0
-    following_count: int = 0
     # follower_links: list["LinkUserFollow"] = Relationship(back_populates="followed", sa_relationship_kwargs={"foreign_keys": [LinkUserFollow.followed_id]}) # 粉丝s
     # following_links: list["LinkUserFollow"] = Relationship(back_populates="follower", sa_relationship_kwargs={ "foreign_keys": [LinkUserFollow.follower_id]}) # 关注的用户s
     team_following_links: list["LinkTeamFollow"] = Relationship(back_populates="user") # 关注的团队s
