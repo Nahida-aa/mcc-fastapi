@@ -12,23 +12,15 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    try {
-      const response = await fetch('/api/py/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password }),
-      })
-      if (response.ok) {
-        const data = await response.json()
-        // Store the token in localStorage or a secure cookie
-        localStorage.setItem('token', data.access_token)
-        router.push('/settings')
-      } else {
-        alert('Registration failed')
-      }
-    } catch (error) {
-      console.error('Registration error:', error)
-      alert('An error occurred during registration')
+    const response = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password }),
+    })
+    if (response.ok) {
+      router.push('/settings')
+    } else {
+      alert('Registration failed')
     }
   }
 

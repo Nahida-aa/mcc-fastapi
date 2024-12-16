@@ -1,13 +1,13 @@
 # from io import BytesIO
 # from typing import Annotated
 # from uuid import UUID
-# from app.utils.exceptions import (
-#     IdNotFoundException,
-#     SelfFollowedException,
-#     UserFollowedException,
-#     UserNotFollowedException,
-#     UserSelfDeleteException,
-# )
+from server.utils.exceptions import (
+    # IdNotFoundException,
+    SelfFollowedException,
+    # UserFollowedException,
+    # UserNotFollowedException,
+    # UserSelfDeleteException,
+)
 # # from app import crud
 # # from app.api import deps
 # from app.deps import user_deps
@@ -345,80 +345,28 @@ def update_user_platform(
 # #     return create_response(data=users)
 
 
-# @router.get(
-#     "/{user_id}/following/{target_user_id}",
-#     status_code=status.HTTP_204_NO_CONTENT,
-#     response_class=Response,
-# )
-# async def check_a_user_is_followed_another_user_by_id(
-#     user_id: UUID,
-#     target_user_id: UUID,
-#     current_user: User = Depends(deps.get_current_user()),
-# ):
-#     """
-#     Check if a user follows another user
-#     """
-#     if user_id == target_user_id:
-#         raise SelfFollowedException()
-
-#     user = await crud.user.get(id=user_id)
-#     if not user:
-#         raise IdNotFoundException(User, id=user_id)
-
-#     target_user = await crud.user.get(id=target_user_id)
-#     if not target_user:
-#         raise IdNotFoundException(User, id=target_user_id)
-
-#     result = await crud.user_follow.get_follow_by_user_id_and_target_user_id(
-#         user_id=user_id, target_user_id=target_user_id
-#     )
-#     if not result:
-#         raise UserNotFollowedException(
-#             user_name=user.last_name, target_user_name=target_user.last_name
-#         )
-
-
-# @router.put("/following/{target_user_id}")
-# async def follow_a_user_by_id(
-#     target_user_id: UUID,
-#     current_user: User = Depends(deps.get_current_user()),
-# ) -> IPutResponseBase[IUserFollowRead]:
-#     """
-#     Following a user
-#     """
-#     if target_user_id == current_user.id:
-#         raise SelfFollowedException()
-#     target_user = await crud.user.get(id=target_user_id)
-#     if not target_user:
-#         raise IdNotFoundException(User, id=target_user_id)
-
-#     current_follow_user = (
-#         await crud.user_follow.get_follow_by_user_id_and_target_user_id(
-#             user_id=current_user.id, target_user_id=target_user_id
-#         )
-#     )
-#     if current_follow_user:
-#         raise UserFollowedException(target_user_name=target_user.last_name)
-
-#     new_user_follow = await crud.user_follow.follow_a_user_by_target_user_id(
-#         user=current_user, target_user=target_user
-#     )
-#     return create_response(data=new_user_follow)
 @router.get("/is_following/{target_user_id}")
 def is_following_user(target_user_id: int, db: SessionDep, current_user: User = Depends(get_current_user))-> LinkUserFollow|None :
     followed_user = db.get(User, target_user_id)
     if not followed_user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    is_following = db.exec(select(LinkUserFollow).where(LinkUserFollow.follower_id == current_user.id).where(LinkUserFollow.followed_id == target_user_id)).first()
-    return is_following
+    link_user_follow = db.exec(select(LinkUserFollow).where(LinkUserFollow.follower_id == current_user.id).where(LinkUserFollow.followed_id == target_user_id)).first()
+    return link_user_follow
 
 @router.post("/follow/{target_user_id}")
 def follow_user(target_user_id: int, db: SessionDep, current_user: User = Depends(get_current_user))->User:
+    """
+    关注一个用户, with token and target_user_id
+    """
+    if target_user_id == current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Following/Unfollowing self not allowed!")
     followed_user = db.get(User, target_user_id)
     if not followed_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    link_user_follow = db.exec(select(LinkUserFollow).where(LinkUserFollow.follower_id == current_user.id).where(LinkUserFollow.followed_id == target_user_id)).first()
+    if link_user_follow:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"current user({current_user.username}) has already followed the target user")
     followed_user = crud.link_user_follow.follow(follower=current_user, followed=followed_user, db_session=db)
     return followed_user
 

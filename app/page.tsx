@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import AppNavBar from './components/AppNavBar'
+import { fetchWithAuth, isAuthenticated, logout } from './utils/auth'
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -15,26 +16,19 @@ export default function Home() {
   }, [])
 
   const checkLoginStatus = async () => {
-    const token = localStorage.getItem('token')
-    if (token) {
+    if (isAuthenticated()) {
       try {
-        const response = await fetch('/api/py/user', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
+        const response = await fetchWithAuth('/api/py/user')
         if (response.ok) {
           const userData = await response.json()
           setIsLoggedIn(true)
           setUsername(userData.username)
         } else {
-          // Token is invalid or expired
-          localStorage.removeItem('token')
-          setIsLoggedIn(false)
+          handleLogout()
         }
       } catch (error) {
         console.error('Error checking login status:', error)
-        setIsLoggedIn(false)
+        handleLogout()
       }
     } else {
       setIsLoggedIn(false)
@@ -42,7 +36,7 @@ export default function Home() {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
+    logout()
     setIsLoggedIn(false)
     setUsername('')
     router.push('/')

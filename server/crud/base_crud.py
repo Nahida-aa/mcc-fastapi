@@ -14,7 +14,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     # def get_db(self):
     #     return db
     def get(self, *, id, db_session: Session) -> ModelType:
-        return db_session.exec(select(self.model).filter(self.model.id == id)).first()
+        # return db_session.exec(select(self.model).filter(self.model.id == id)).first()
         return db_session.get(self.model, id) # 等价于上面的代码
     def update(self, *, obj_current: ModelType, 
                obj_new: UpdateSchemaType | dict[str, Any] | ModelType, db_session: Session) -> ModelType:

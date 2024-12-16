@@ -1,0 +1,1 @@
+export type WebAuthnProviderType = "webauthn" // 24

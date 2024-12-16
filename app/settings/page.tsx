@@ -6,7 +6,9 @@ import { useRouter } from 'next/navigation'
 export default function BasicSettings() {
   const [user, setUser] = useState({
     username: '',
+    avatar: '',
     email: '',
+    phone: '',
     nickname: '',
     age: '',
   })

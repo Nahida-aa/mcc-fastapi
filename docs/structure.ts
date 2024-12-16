@@ -1,11 +1,16 @@
+type UserMeta = {
+  email: string;
+  name: string;
+};
+
 type User = {
   id: number
   created: Date
   updated: Date
   last_login: Date, // 最后登录时间
-  "username": "string",
+  name: string,
   "password": "string",
-  "email": "string",
+  "email": string,
   "nickname": "string",
   "is_superuser": boolean // 是否是超级用户
   "is_staff": "boolean", // 是否是员工

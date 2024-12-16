@@ -17,7 +17,7 @@ BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_PATH)
 print(BASE_PATH)
 
-from fastapi import Body, Depends, FastAPI, HTTPException, status
+from fastapi import Body, Depends, FastAPI, HTTPException, Response, status
 from pydantic import BaseModel
 from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -97,7 +97,7 @@ def refresh_token(refresh_token: str) -> RefreshTokenResponse:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
 
 @app.post("/api/py/login")
-def login( db: SessionDep,
+def login(response: Response, db: SessionDep,
           username: str = Body(...),
           password: str = Body(...)
 )->TokenWithUser:
@@ -114,6 +114,10 @@ def login( db: SessionDep,
         )
     access_token = create_access_token(data={"username": user.username})
     refresh_token = create_refresh_token(data={"username": user.username})
+    
+    response.set_cookie(key="access_token", value=access_token, httponly=True, max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60, samesite="strict")
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, max_age=settings.REFRESH_TOKEN_EXPIRE_MINUTES * 60, samesite="strict")
+    
     return TokenWithUser(access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=UserPublic.from_orm(user))
 
 @app.post("/api/py/register")
