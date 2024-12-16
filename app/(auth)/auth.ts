@@ -1,11 +1,11 @@
 // "use server";
-import { headers as nextHeaders } from "next/headers"
+// import { headers as nextHeaders } from "next/headers"
 import { cookies } from 'next/headers'
-import { AuthAction } from "./core/types";
+// import { AuthAction } from "./core/types";
 // import { Auth, AuthConfig } from "./core";
 // import { NextAuthConfig } from "./core/lib";
-import { redirect } from "next/navigation";
-import { raw, skipCSRFCheck } from "./core/lib/symbols";
+// import { redirect } from "next/navigation";
+// import { raw, skipCSRFCheck } from "./core/lib/symbols";
 
 export async function auth(){
   const cookieStore = cookies();
