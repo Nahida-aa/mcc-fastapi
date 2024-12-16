@@ -1,7 +1,7 @@
 import "./globals.css";
 import localFont from "next/font/local";
 import { ThemeProvider } from '@/components/providers/theme-provider';
-import AuthProvider from './components/AuthProvider'
+// import AuthProvider from './components/AuthProvider'
 const xiaolaiSans = localFont({
   src: "./fonts/XiaolaiMonoSC-Regular.ttf",
   variable: "--font-xiaolai-sans",
