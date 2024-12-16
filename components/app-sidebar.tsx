@@ -31,14 +31,14 @@ export function AppSidebar({ user }: { user: UserMeta | undefined }) {
         <SidebarMenu>
           <div className="flex flex-row justify-between items-center">
             <Link
-              href="/aa-ui"
+              href="/"
               onClick={() => {
                 setOpenMobile(false);
               }}
               className="flex flex-row gap-3 items-center"
             >
               <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
-                aa-ui
+                mcc
               </span>
             </Link>
             <BetterTooltip content="New Chat" align="start">

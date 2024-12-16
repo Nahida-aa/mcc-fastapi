@@ -13,6 +13,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const [session, cookieStore] = await Promise.all([auth(), cookies()]);
+  console.log(`app/(main)/layout.tsx: Layout: session.user: ${JSON.stringify(session?.user)}`);
   const isCollapsed = cookieStore.get('sidebar:state')?.value !== 'true';
 
   return (

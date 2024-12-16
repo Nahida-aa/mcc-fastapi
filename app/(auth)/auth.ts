@@ -16,6 +16,7 @@ export async function auth(){
   }
   // 解密 token
   const user = JSON.parse(atob(token.value.split('.')[1]));
+  console.log(`app/(auth)/actions.ts: auth: user: ${JSON.stringify(user)}`);
   return { user };
 }
 
