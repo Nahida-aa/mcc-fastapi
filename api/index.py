@@ -6,8 +6,8 @@ import jwt
 
 from server import crud
 from server.core.security import create_access_token, create_refresh_token, decode_token
-from server.models import User, UserPlatformInfo, Tag
-from server.models.links_model import LinkUserPlatformInfoTag
+# from server.models import User, UserPlatformInfo, Tag
+# from server.models.links_model import LinkUserPlatformInfoTag
 from server.models.security_model import Token, TokenWithUser
 from server.schemas.user_schema import UserPublic
 
@@ -23,9 +23,9 @@ from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
-from server.lib.database import create_db_and_tables
+# from server.lib.database import create_db_and_tables
 from server.lib.database import  engine
-from server.api import user as user_api
+# from server.api import user as user_api
 from server.core.config import settings
 from server.deps import SessionDep, get_db
 from server.deps.user_deps import CheckUserExists
@@ -195,4 +195,4 @@ def register(db: SessionDep, new_user: CheckUserExists)->TokenWithUser:
 # app.include_router(api_router_v1, prefix="/api/v1/py")
 
 
-app.include_router(user_api.router)
+# app.include_router(user_api.router)
