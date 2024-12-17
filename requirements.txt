@@ -1,12 +1,12 @@
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
-python-multipart
-pyjwt
+# python-multipart
+# pyjwt
 # bcrypt==4.0.1
-passlib[bcrypt]
+# passlib[bcrypt]
 # sqlalchemy
-sqlmodel
-psycopg2-binary
-python-dotenv
+# sqlmodel
+# psycopg2-binary
+# python-dotenv
 # pydantic-settings
 # sqladmin
