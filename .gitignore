@@ -39,6 +39,9 @@ next-env.d.ts
 __pycache__/
 venv
 
+# sqlachemy
+alembic
+
 # vscode
 .vscode/
 .rest
