@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'XiaolaiSans';
+  src: url('https://blog.Nahida-aa.us.kg/fonts/XiaolaiMonoSC-Regular.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'XiaolaiMono';
+  src: url('https://blog.Nahida-aa.us.kg/fonts/XiaolaiMonoSC-Regular.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+body{
+  font-family: 'XiaolaiMono', monospace;
+}
 html, body, :root {
   height: 100%;
 }

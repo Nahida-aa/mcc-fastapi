@@ -1,17 +1,7 @@
 import "./globals.css";
-import localFont from "next/font/local";
 import { ThemeProvider } from '@/components/providers/theme-provider';
 // import AuthProvider from './components/AuthProvider'
-const xiaolaiSans = localFont({
-  src: "../public/fonts/XiaolaiMonoSC-Regular.ttf",
-  variable: "--font-xiaolai-sans",
-  weight: "100 900",
-});
-const xiaolaiMono = localFont({
-  src: "../public/fonts/XiaolaiMonoSC-Regular.ttf",
-  variable: "--font-xiaolai-mono",
-  weight: "100 900",
-});
+
 
 export const metadata = {
   title: "mcc",
@@ -26,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body 
-      className={`${xiaolaiSans.variable} ${xiaolaiMono.variable} antialiased`}
+      className={`antialiased`}
       suppressHydrationWarning
       >
         <ThemeProvider
