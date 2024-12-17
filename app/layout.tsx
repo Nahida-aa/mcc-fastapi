@@ -3,12 +3,12 @@ import localFont from "next/font/local";
 import { ThemeProvider } from '@/components/providers/theme-provider';
 // import AuthProvider from './components/AuthProvider'
 const xiaolaiSans = localFont({
-  src: "./fonts/XiaolaiMonoSC-Regular.ttf",
+  src: "../public/fonts/XiaolaiMonoSC-Regular.ttf",
   variable: "--font-xiaolai-sans",
   weight: "100 900",
 });
 const xiaolaiMono = localFont({
-  src: "./fonts/XiaolaiMonoSC-Regular.ttf",
+  src: "../public/fonts/XiaolaiMonoSC-Regular.ttf",
   variable: "--font-xiaolai-mono",
   weight: "100 900",
 });

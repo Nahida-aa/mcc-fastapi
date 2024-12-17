@@ -1,5 +1,6 @@
 // import type { NextConfig } from 'next'; // next15
 import nextPWA from "next-pwa";
+import { fileURLToPath } from 'url';
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -13,6 +14,18 @@ const withPWA = nextPWA({
 /** @type {import('next').NextConfig} */
 // const nextConfig: NextConfig = { // next15
 const nextConfig = {
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      const __filename = fileURLToPath(import.meta.url);
+      config.cache = {
+        type: 'filesystem',
+        buildDependencies: {
+          config: [__filename],
+        },
+      };
+    }
+    return config;
+  },
   images: {
     remotePatterns: [
       {
