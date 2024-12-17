@@ -196,19 +196,3 @@ def register(db: SessionDep, new_user: CheckUserExists)->TokenWithUser:
 
 
 app.include_router(user_api.router)
-
-if os.getenv("ENV") != "production":
-    from sqladmin import Admin, ModelView
-    admin = Admin(app, engine, base_url="/api/py/admin")
-    class UserAdmin(ModelView, model=User):
-        column_list = [str(User.id), User.name, str(User.is_active), str(User.is_superuser)]
-    class UserPlatformInfoAdmin(ModelView, model=UserPlatformInfo):
-        column_list = [str(UserPlatformInfo.id)]
-    class TagAdmin(ModelView, model=Tag):
-        column_list = [str(Tag.id), Tag.name, Tag.description]
-    class LinkUserPlatformInfoTagAdmin(ModelView, model=LinkUserPlatformInfoTag):
-        column_list = [str(LinkUserPlatformInfoTag.user_platform_info_id), str(LinkUserPlatformInfoTag.tag_id)]
-    admin.add_view(UserAdmin)
-    admin.add_view(UserPlatformInfoAdmin)
-    admin.add_view(TagAdmin)
-    admin.add_view(LinkUserPlatformInfoTagAdmin)
