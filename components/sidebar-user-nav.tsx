@@ -18,12 +18,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { signOut, client_sign_out } from '@/app/(auth)/client';
 
-export function SidebarUserNav({ user }: { user: UserMeta }) {
+export function SidebarUserNav({ user }: { user?: UserMeta }) {
   const { setTheme, theme } = useTheme();
   const router = useRouter();
-  const isGuest = user.email === 'guest@example.com';
-
+  const isGuest = !user;
+  const img_src = user?.image ?? `https://avatar.vercel.sh/${user?.email}`
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -31,13 +32,13 @@ export function SidebarUserNav({ user }: { user: UserMeta }) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent bg-background data-[state=open]:text-sidebar-accent-foreground h-10">
               <Image
-                src={`https://avatar.vercel.sh/${user.email}`}
-                alt={user.email ?? 'User Avatar'}
+                src={img_src}
+                alt={user?.name ?? 'User Avatar'}
                 width={24}
                 height={24}
                 className="rounded-full"
               />
-              <span className="truncate">{isGuest ? "未登录" : user?.email}</span>
+              <span className="truncate">{isGuest ? "未登录" : user?.name}</span>
               <ChevronUp className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -58,11 +59,12 @@ export function SidebarUserNav({ user }: { user: UserMeta }) {
                 className="w-full cursor-pointer"
                 onClick={() => {
                   if (isGuest) {
-                    router.push('/login'); // 导航到登录页面
+                    router.push('/sign-in'); // 导航到登录页面
                   } else {
                     // signOut({
-                    //   redirectTo: '/',
-                    // });
+                    client_sign_out({
+                      redirectTo: '/',
+                    });
                   }
                 }}
               >

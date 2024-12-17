@@ -26,7 +26,7 @@ export function AppSidebar({ user }: { user: UserMeta | undefined }) {
   const { setOpenMobile } = useSidebar();
   const displayUser = user || { email: 'guest@example.com', name: 'Guest' }
   return (
-    <Sidebar className="group-data-[side=left]:border-r-0 backdrop-blur-md">
+    <Sidebar className="group-data-[side=left]:border-r-0 backdrop-blur-md ">
       <SidebarHeader>
         <SidebarMenu>
           <div className="flex flex-row justify-between items-center">
@@ -41,7 +41,7 @@ export function AppSidebar({ user }: { user: UserMeta | undefined }) {
                 mcc
               </span>
             </Link>
-            <BetterTooltip content="New Chat" align="start">
+            <BetterTooltip content="New Server" align="start">
               <Button
                 variant="ghost"
                 type="button"
@@ -67,7 +67,7 @@ export function AppSidebar({ user }: { user: UserMeta | undefined }) {
         {/* {displayUser && ( */}
           <SidebarGroup>
             <SidebarGroupContent>
-              <SidebarUserNav user={displayUser} />
+              <SidebarUserNav user={user} />
             </SidebarGroupContent>
           </SidebarGroup>
         {/* )} */}

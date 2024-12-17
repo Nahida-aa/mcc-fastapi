@@ -9,6 +9,7 @@ from server import crud
 from server.core.security import create_access_token, decode_token
 from server.models.security_model import TokenData
 from server.deps import SessionDep
+from server.models.user_model import User
 
 
 oauth2_scheme = OAuth2PasswordBearer(
@@ -28,6 +29,7 @@ oauth2_scheme = OAuth2PasswordBearer(
 class Cookies(BaseModel):
     access_token: str|None = None
     refresh_token: str|None = None
+
 async def get_current_user(db_session: SessionDep, security_scopes: SecurityScopes, token: Annotated[str|None, Depends(oauth2_scheme)],
     cookies: Annotated[Cookies, Cookie()],
     response: Response
@@ -48,10 +50,10 @@ async def get_current_user(db_session: SessionDep, security_scopes: SecurityScop
         if token is None and cookies.refresh_token is not None:
             print(f"获得当前用户::refresh_token: {cookies.refresh_token}")
             payload = decode_token(cookies.refresh_token)
-            username = payload.get("username")
-            if username is None:
+            name = payload.get("name")
+            if name is None:
                 raise credentials_exception
-            token = create_access_token(data={"username": username})
+            token = create_access_token(data={"name": name})
             response.set_cookie(
                 key="access_token",
                 value=token,
@@ -62,15 +64,15 @@ async def get_current_user(db_session: SessionDep, security_scopes: SecurityScop
         print(f"获得当前用户::token: {token}")
         payload = decode_token(token)
         print(f"获得当前用户::payload: {payload}")
-        username = payload.get("username")
-        print(f"获得当前用户::username: {username}")
-        if username is None:
+        name = payload.get("name")
+        print(f"获得当前用户::name: {name}")
+        if name is None:
             raise credentials_exception
         token_scopes = payload.get("scopes", [])
-        token_data = TokenData(scopes=token_scopes, username=username)
+        token_data = TokenData(scopes=token_scopes, name=name)
     except (jwt.InvalidTokenError, ValidationError):
         raise credentials_exception
-    user = crud.user.get_by_username(username=token_data.username, db_session=db_session)
+    user = crud.user.get_by_name(name=token_data.name, db_session=db_session)
     print(f"获得当前用户::user: {user}")
     if user is None:
         raise credentials_exception
@@ -83,4 +85,4 @@ async def get_current_user(db_session: SessionDep, security_scopes: SecurityScop
             )
     return user
 
-# CurrentUser = Annotated[Security(get_current_user), Depends(oauth2_scheme)]
+CurrentUser = Annotated[User, Depends(oauth2_scheme)]

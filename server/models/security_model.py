@@ -15,5 +15,5 @@ class Token(BaseModel):
     refresh_token: str
 
 class TokenData(BaseModel):
-    username: str
+    name: str
     scopes: list[str] = []

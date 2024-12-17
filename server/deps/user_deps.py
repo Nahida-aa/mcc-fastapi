@@ -7,18 +7,19 @@ from server.deps import SessionDep, get_db
 
 
 async def check_user_exists(new_user: UserCreate, db: SessionDep) -> UserCreate:
-    user = crud.user.get_by_username(username=new_user.username, db_session=db)
+    user = crud.user.get_by_name(name=new_user.name, db_session=db)
     if user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="User already exists",
         )
-    user = crud.user.get_by_email(email=new_user.email, db_session=db)
-    if user:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Email already exists",
-        )
+    if new_user.email:
+        user = crud.user.get_by_email(email=new_user.email, db_session=db)
+        if user:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Email already exists",
+            )
     # role = await crud.role.get(id=new_user.role_id)
     # if not role:
     #     raise IdNotFoundException(Role, id=new_user.role_id)

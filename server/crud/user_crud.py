@@ -8,10 +8,10 @@ from server.schemas.user_schema import IDCardInfoUpdate, UserCreate, UserPlatfor
 from fastapi import HTTPException, Path, status
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
-    def get_by_username(self, *, username: str, db_session: Session) -> User|None:
+    def get_by_name(self, *, name: str, db_session: Session) -> User|None:
         # db_session = db_session or super().get_db()
-        statement = select(User).where(User.username == username)
-        print(f"CRUDUser::get_by_username::statement: {statement}")
+        statement = select(User).where(User.name == name)
+        print(f"CRUDUser::get_by_name::statement: {statement}")
         return db_session.exec(statement).one_or_none()
     def get_by_email(self, *, email: str, db_session: Session) -> User|None:
         statement = select(User).where(User.email == email)
@@ -19,7 +19,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def create(self, *, obj_in: UserCreate, db_session: Session):
         # 创建新用户
         db_obj = User(
-            username=obj_in.username,
+            name=obj_in.name,
             email=obj_in.email,
             phone=obj_in.phone,
             age=obj_in.age,
@@ -72,13 +72,14 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db_session.commit()
         db_session.refresh(db_obj)
         return db_obj
-    def authenticate_user(self, *, username: str, password: str, db_session: Session):
-        print(f"authenticate_user::username: {username}, password: {password}")
-        user = self.get_by_username(username=username, db_session=db_session)
+    def authenticate_user(self, *, name: str, password: str, db_session: Session):
+        print(f"authenticate_user::name: {name}, password: {password}")
+        user = self.get_by_name(name=name, db_session=db_session)
         print(f"authenticate_user:成功拿到用户:user: {user}")
         if not user:
             return False
         if not verify_password(password, user.hashed_password):
+            print(f"authenticate_user:密码错误")
             return False
         return user
     
@@ -90,6 +91,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db_session.commit()
         db_session.refresh(user)
         return user
+
 user = CRUDUser(User)
 
 from server.models.user_model import User, IDCardInfo, UserPlatformInfo, LinkUserPlatformInfoTag
@@ -137,7 +139,7 @@ from server.core.security import get_password_hash
 def create_user(user_in: UserCreate, db: Session,):
     # 创建新用户
     db_user = User(
-        username=user_in.username,
+        name=user_in.name,
         email=user_in.email,
         phone=user_in.phone,
         age=user_in.age,

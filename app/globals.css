@@ -22,7 +22,8 @@ html, body, :root {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 75, 59%, 93%, 0.6;
+    --background-var: hsl(75, 59%, 93%, 0.6);
     --background-1: hsl(199, 46%, 86%);
     --background-2: hsl(216, 73%, 84%);
     --background-3: hsl(250, 65%, 88%);
@@ -54,7 +55,8 @@ html, body, :root {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 0, 0%, 98% ,0.4;
+    --sidebar-background-var: rgba(250, 250, 250, 0.2);
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
@@ -64,7 +66,9 @@ html, body, :root {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
-    --background: 20 14.3% 4.1%;
+    /* --background: 20 14.3% 4.1%; */
+    
+    --background: 240, 10%, 3.9%, 0.2;
     /* --background: hsl(240, 10%, 3.9%, 0.2); */
     --background-1: hsl(220, 73%, 9%);
     --background-2: hsl(234, 31%, 12%);
@@ -96,7 +100,8 @@ html, body, :root {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
+    --sidebar-background: 240, 28%, 23% , 0.5;
+    --sidebar-background-var: hsla(240, 28%, 23%, 0.3);
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -127,5 +132,11 @@ html, body, :root {
     /* bg-background  */
     bg-m
     text-foreground;
+  }
+}
+
+@layer utilities {
+  .glow-purple-box-shadow {
+    box-shadow: 0 0 2px #0e002000, 0 0 7px #780afe75, 0 0 5px #780afe75, 0 0 18px #780afe75;
   }
 }

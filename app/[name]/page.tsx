@@ -7,7 +7,7 @@ import AppNavBar from '../components/AppNavBar'
 
 interface User {
   id: number
-  username: string
+  name: string
   avatar: string
   nickname: string
   email: string
@@ -27,14 +27,14 @@ export default function UserProfile() {
   const [isFollowing, setIsFollowing] = useState(false)
   const [isCurrentUser, setIsCurrentUser] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const { username } = useParams()
+  const { name } = useParams()
   const router = useRouter()
 
   useEffect(() => {
     fetchUserData()
     checkIfCurrentUser()
     checkLoginStatus()
-  }, [username])
+  }, [name])
 
   const fetchUserData = async () => {
     try {
@@ -43,7 +43,7 @@ export default function UserProfile() {
       if (token) {
         headers['Authorization'] = `Bearer ${token}`
       }
-      const response = await fetch(`/api/py/user/${username}`, { headers })
+      const response = await fetch(`/api/py/user/${name}`, { headers })
       if (response.ok) {
         const userData = await response.json()
         setUser(userData)
@@ -69,7 +69,7 @@ export default function UserProfile() {
         })
         if (response.ok) {
           const currentUser = await response.json()
-          setIsCurrentUser(currentUser.username === username)
+          setIsCurrentUser(currentUser.name === name)
         }
       } catch (error) {
         console.error('Error checking current user:', error)
@@ -138,11 +138,11 @@ export default function UserProfile() {
             <div className="sm:flex sm:items-center sm:justify-between">
               <div className="sm:flex sm:space-x-5">
                 <div className="flex-shrink-0">
-                  <img className="mx-auto h-20 w-20 rounded-full" src={user.avatar || '/placeholder.svg?height=80&width=80'} alt={user.username} />
+                  <img className="mx-auto h-20 w-20 rounded-full" src={user.avatar || '/placeholder.svg?height=80&width=80'} alt={user.name} />
                 </div>
                 <div className="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
-                  <p className="text-xl font-bold text-gray-900 sm:text-2xl">{user.nickname || user.username}</p>
-                  <p className="text-sm font-medium text-gray-600">@{user.username}</p>
+                  <p className="text-xl font-bold text-gray-900 sm:text-2xl">{user.nickname || user.name}</p>
+                  <p className="text-sm font-medium text-gray-600">@{user.name}</p>
                 </div>
               </div>
               <div className="mt-5 flex justify-center sm:mt-0">

@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional, Sequence
 from pydantic import BaseModel
 from sqlmodel import Field, Relationship
-from server.models.base_id_model import SQLModel, TimestampMixin
+from server.models.base_id_model import AutoIDNameModel, SQLModel, TimestampMixin
 from server.models import LinkUserFollow, LinkTeamFollow, LinkUserIdentity, LinkUserPlatformInfoTag, LinkUserProj, LinkUserResource, LinkUserTeam
 
 class IDCardInfoBase(SQLModel):
@@ -17,18 +17,16 @@ class IDCardInfo(IDCardInfoBase, table=True):  # 身份证信息, 一对一关�
     user_id: int | None = Field(default=None, foreign_key="User.id")
     user: Optional["User"] = Relationship(back_populates="id_card_info")
     
-class UserBase(SQLModel):
-    username: str = Field(unique=True, index=True)
-    avatar: str = ""
+class UserBase(AutoIDNameModel):
+    image: str = ""
     nickname: str = ""
-    email: str = Field(default="", index=True, unique=True)
+    email: str | None = Field(default=None, index=True, unique=True)
     phone: str = ""  # 手机号, 通过逻辑来实现必填
     age: int | None = Field(default=None, index=True)
-    followers_count: int = 0
-    following_count: int = 0
+    followers_count: int = 0 # 粉丝数
+    following_count: int = 0 # 关注的用户(包括团队)数
 
-class User(UserBase, TimestampMixin, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+class User(UserBase, table=True):
     last_login: datetime | None = None
     is_superuser: bool = False
     is_staff: bool = False

@@ -5,13 +5,14 @@ from server.models.user_model import IDCardInfoBase, User, UserBase, UserPlatfor
 
 class UserCreate(UserBase):
     password: str
-    id_card_info: Optional["IDCardInfoBase"] = None
+    # id_card_info: Optional["IDCardInfoBase"] = None
+    id_card_info: IDCardInfoBase
     platform_info: Optional["UserPlatformInfoCreate"] = None
 
 
 class UserUpdate(SQLModel):
-    username: str | None = None
-    avatar: str | None = None
+    name: str | None = None
+    image: str | None = None
     nickname: str | None = None
     email: str | None = None
     phone: str | None = None
@@ -36,12 +37,12 @@ class UserPublic(UserBase):
         platform_info = user.platform_info
         if platform_info:
             platform_info_public = UserPlatformInfoPublic.from_orm(platform_info)
-            # print(f"{user.username}有平台信息: {platform_info_public}")
+            # print(f"{user.name}有平台信息: {platform_info_public}")
 
         return cls(
             id=user.id,  # type: ignore
-            username=user.username,
-            avatar=user.avatar,
+            name=user.name,
+            image=user.image,
             nickname=user.nickname,
             email=user.email,
             phone=user.phone,

@@ -1,6 +1,8 @@
 type UserMeta = {
   email: string;
   name: string;
+  image: string | null;
+  nickname: string;
 };
 
 type User = {

@@ -26,7 +26,7 @@ class UUIDModel(TimestampMixin):
     )
     
 class BaseDBModel_Create(TimestampMixin):
-    name: str = Field(index=True)
+    name: str = Field(index=True, unique=True)
     description: str = ""
     
 class AutoIDNameModel(BaseDBModel_Create, AutoIDModel):
