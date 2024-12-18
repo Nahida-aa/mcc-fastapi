@@ -25,7 +25,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 # from server.lib.database import create_db_and_tables
 from server.lib.database import  engine
-# from server.api import user as user_api
+from api import user as user_api
 from server.core.config import settings
 from server.deps import SessionDep, get_db
 from server.deps.user_deps import CheckUserExists
@@ -177,22 +177,6 @@ def register(db: SessionDep, new_user: CheckUserExists)->TokenWithUser:
     access_token = create_access_token(data={"id": user.id,"name": user.name, "image":user.image, "email":user.email, "nickname":user.nickname})
     refresh_token = create_refresh_token(data={"id": user.id,"name": user.name, "image":user.image, "email":user.email, "nickname":user.nickname})
     return TokenWithUser(access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=UserPublic.from_orm(user))
-# def select_users():
-#     # with Session(engine) as session:
-#     #     users = session.exec(select(User)).all()
-#     #     print(f"All users: {users}")
-#     pass
-# def main():
-#     create_db_and_tables()
-#     select_users()
-
-# if __name__ == "__main__":
-#     main()
-#     uvicorn.run("main:app", port=5000, log_level="info")
-
-# Add Routers
-# app.include_router(api_router_v1, prefix=settings.API_V1_STR)
-# app.include_router(api_router_v1, prefix="/api/v1/py")
 
 
-# app.include_router(user_api.router)
+app.include_router(user_api.router)
