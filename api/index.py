@@ -31,7 +31,8 @@ from server.deps import SessionDep, get_db
 from server.deps.user_deps import CheckUserExists
 # from api.apis.v1.api import api_router as api_router_v1
 
-app = FastAPI(docs_url="/api/py/docs",redoc_url="/api/py/redoc", openapi_url="/api/py/openapi.json")
+# app = FastAPI(docs_url="/api/py/docs",redoc_url="/api/py/redoc", openapi_url="/api/py/openapi.json")
+app = FastAPI(docs_url="/",redoc_url="/redoc", openapi_url="/api/py/openapi.json")
 
 origins = [
     "https://127.0.0.1:3000",
