@@ -8,7 +8,7 @@ const withPWA = nextPWA({
   dest: "public",
   register: true,
   skipWaiting: true,
-  disable: isDev,
+  // disable: isDev,
 });
 
 /** @type {import('next').NextConfig} */
