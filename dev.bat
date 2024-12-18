@@ -1,0 +1,1 @@
+pip3 install -r requirements.txt && python -m uvicorn api.index:app --reload
