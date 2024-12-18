@@ -39,11 +39,18 @@ export function HomeHeader(
           <div className='text-xs text-gray-400'>{user_status}</div>
         </div>
       </div>
-      {(!open || windowWidth < 768) && (
+
+      {/* <ModelSelector
+        selectedModelId={selectedModelId}
+        className="order-1 md:order-2"
+      /> */}
+      <div className='space-x-1'>
+        <ModeToggle />
+        {(!open || windowWidth < 768) && (
         <BetterTooltip content="New Server">
           <Button
             variant="outline"
-            className="order-2 md:order-1 md:px-2 px-2 md:h-fit ml-auto md:ml-0"
+            className="order-2 md:order-1 md:px-2 px-2 ml-auto md:ml-0 size-10 "
             onClick={() => {
               router.push('/');
               router.refresh();
@@ -54,12 +61,7 @@ export function HomeHeader(
           </Button>
         </BetterTooltip>
       )}
-      {/* <ModelSelector
-        selectedModelId={selectedModelId}
-        className="order-1 md:order-2"
-      /> */}
-
-      <ModeToggle />
+      </div>
     </header>
   );
 }
