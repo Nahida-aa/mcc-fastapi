@@ -120,10 +120,16 @@ class UserOrTeamFollowMetaList(BaseModel):
     count: int
     data: list[UserOrTeamFollowMeta]
 
-@router.get("/{target_name}/followers", tags=["follow"], summary="返回 name 的粉丝列表, 携带关注消息")
-def read_target_name_followers(target_name: str, db: SessionDep,
+@router.get(
+    "/{target_name}/followers",
+    tags=["follow"], 
+    summary="返回 name 的粉丝列表, 携带关注消息"
+)
+def read_target_name_followers(
+    target_name: str, 
+    db: SessionDep,
     current_user: User = Depends(get_current_user)
-    )->UserOrTeamFollowMetaList:
+) -> UserOrTeamFollowMetaList:
     """
     - 需要携带 access_token
     - 粉丝列表: 目前不包括团队,因为团队只能被关注
