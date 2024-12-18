@@ -103,29 +103,29 @@ def get_csrf_token(response: Response):
     response.set_cookie(key="csrf_token", value=csrf_token, httponly=True, samesite="strict")
     return {"csrfToken": csrf_token}
 
-@app.post("/api/py/login")
-def login(response: Response, db: SessionDep,
-          name: str = Body(...),
-          password: str = Body(...)
-)->TokenWithUser:
-    """
-    User login, get an access token and refresh token
-    """
-    user = crud.user.authenticate_user(name=name, password=password, db_session=db)
+# @app.post("/api/py/login")
+# def login(response: Response, db: SessionDep,
+#           name: str = Body(...),
+#           password: str = Body(...)
+# )->TokenWithUser:
+#     """
+#     User login, get an access token and refresh token
+#     """
+#     user = crud.user.authenticate_user(name=name, password=password, db_session=db)
     
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect name or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token = create_access_token(data={"id": user.id,"name": user.name, "image":user.image, "email":user.email, "nickname":user.nickname})
-    refresh_token = create_refresh_token(data={"id": user.id,"name": user.name, "image":user.image, "email":user.email, "nickname":user.nickname})
+#     if not user:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Incorrect name or password",
+#             headers={"WWW-Authenticate": "Bearer"},
+#         )
+#     access_token = create_access_token(data={"id": user.id,"name": user.name, "image":user.image, "email":user.email, "nickname":user.nickname})
+#     refresh_token = create_refresh_token(data={"id": user.id,"name": user.name, "image":user.image, "email":user.email, "nickname":user.nickname})
     
-    response.set_cookie(key="access_token", value=access_token, httponly=True, max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60, samesite="strict")
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, max_age=settings.REFRESH_TOKEN_EXPIRE_MINUTES * 60, samesite="strict")
+#     response.set_cookie(key="access_token", value=access_token, httponly=True, max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60, samesite="strict")
+#     response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, max_age=settings.REFRESH_TOKEN_EXPIRE_MINUTES * 60, samesite="strict")
     
-    return TokenWithUser(access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=UserPublic.from_orm(user))
+#     return TokenWithUser(access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=UserPublic.from_orm(user))
 
 class JsonBody(BaseModel):
     name: str
