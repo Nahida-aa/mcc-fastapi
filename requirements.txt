@@ -7,6 +7,6 @@ passlib[bcrypt]
 # sqlalchemy
 sqlmodel
 psycopg2-binary
-# python-dotenv
-pydantic-settings
+python-dotenv
+# pydantic-settings
 # sqladmin
