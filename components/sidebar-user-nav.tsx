@@ -18,7 +18,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { signOut, client_sign_out } from '@/app/(auth)/client';
+import { client_sign_out } from '@/app/(auth)/client';
 
 export function SidebarUserNav({ user }: { user?: UserMeta }) {
   const { setTheme, theme } = useTheme();
