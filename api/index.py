@@ -40,7 +40,7 @@ origins = [
     "http://localhost:3000",
     "https://127.0.0.1",
     "https://127.0.0.1:8080",
-    "https://mcc.Nahida-aa.us,kg",
+    "https://mcc.Nahida-aa.us.kg",
     "mcc-next.vercel.app",
 ]
 
@@ -104,7 +104,7 @@ def get_csrf_token(response: Response):
     Generate and return a CSRF token
     """
     csrf_token = secrets.token_urlsafe(32)
-    response.set_cookie(key="csrf_token", value=csrf_token, httponly=True, samesite="Lax ")
+    response.set_cookie(key="csrf_token", value=csrf_token, httponly=True, samesite="lax ")
     return {"csrfToken": csrf_token}
 
 # @app.post("/api/py/login")
