@@ -104,7 +104,8 @@ def get_csrf_token(response: Response):
     Generate and return a CSRF token
     """
     csrf_token = secrets.token_urlsafe(32)
-    response.set_cookie(key="csrf_token", value=csrf_token, httponly=True, samesite="lax ")
+    response.set_cookie(key="csrf_token", value=csrf_token, httponly=True, 
+                        samesite="lax")
     return {"csrfToken": csrf_token}
 
 # @app.post("/api/py/login")
