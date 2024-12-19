@@ -37,9 +37,11 @@ app = FastAPI(docs_url="/",redoc_url="/redoc", openapi_url="/api/py/openapi.json
 origins = [
     "https://127.0.0.1:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:3000",
     "https://127.0.0.1",
     "https://127.0.0.1:8080",
     "https://mcc.Nahida-aa.us,kg",
+    "mcc-next.vercel.app",
 ]
 
 app.add_middleware(
@@ -84,12 +86,12 @@ def refresh_token(refresh_token: str) -> RefreshTokenResponse:
     Refresh access token using refresh token : 刷新访问令牌
     """
     try:
-        payload = decode_token(refresh_token)
-        user_id = payload.get("id")
-        name = payload.get("name")
+        user = decode_token(refresh_token)
+        user_id = user.get("id")
+        name = user.get("name")
         if user_id is None or name is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
-        new_access_token = create_access_token(data={"name": name})
+        new_access_token = create_access_token(data={"id": user.id,"name": user.name, "image":user.image, "email":user.email, "nickname":user.nickname})
         return RefreshTokenResponse(access_token=new_access_token, token_type="bearer")
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token expired")
