@@ -33,9 +33,12 @@ from server.deps.user_deps import CheckUserExists
 
 # app = FastAPI(docs_url="/api/py/docs",redoc_url="/api/py/redoc", openapi_url="/api/py/openapi.json")
 description = """
-- [去后端写的示例界面](https://mcc.Nahida-aa.us.kg)
+- [去示例界面](https://mcc.Nahida-aa.us.kg)
+- [去 Scalar UI](/)
+- [去 Swagger UI](/docs)
+- [去 ReDoc](/redoc)
 """
-app = FastAPI(docs_url="/",redoc_url="/redoc", openapi_url="/api/py/openapi.json", description=description)
+app = FastAPI(docs_url="/docs",redoc_url="/redoc", openapi_url="/api/py/openapi.json", description=description)
 
 origins = [
     "https://127.0.0.1:3000",
@@ -191,7 +194,7 @@ app.include_router(user_api.router)
 
 from scalar_fastapi import get_scalar_api_reference
 
-@app.get("/docs", include_in_schema=False)
+@app.get("/", include_in_schema=False)
 async def scalar_html():
     return get_scalar_api_reference(
         openapi_url=app.openapi_url,
