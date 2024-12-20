@@ -7,7 +7,7 @@ from server.models import LinkUserFollow, LinkTeamFollow, LinkUserIdentity, Link
 
 class IDCardInfoBase(SQLModel):
     id_card_number: str = Field(index=True, unique=True)
-    id_card_holder: str = "self"
+    id_card_holder: str = "self" 
     is_real_name: bool = False
     front_image_url: str | None = None
     back_image_url: str | None = None

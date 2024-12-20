@@ -32,7 +32,10 @@ from server.deps.user_deps import CheckUserExists
 # from api.apis.v1.api import api_router as api_router_v1
 
 # app = FastAPI(docs_url="/api/py/docs",redoc_url="/api/py/redoc", openapi_url="/api/py/openapi.json")
-app = FastAPI(docs_url="/",redoc_url="/redoc", openapi_url="/api/py/openapi.json")
+description = """
+- [去后端写的示例界面](https://mcc.Nahida-aa.us.kg)
+"""
+app = FastAPI(docs_url="/",redoc_url="/redoc", openapi_url="/api/py/openapi.json", description=description)
 
 origins = [
     "https://127.0.0.1:3000",
@@ -185,3 +188,12 @@ def register(db: SessionDep, new_user: CheckUserExists)->TokenWithUser:
 
 
 app.include_router(user_api.router)
+
+from scalar_fastapi import get_scalar_api_reference
+
+@app.get("/docs", include_in_schema=False)
+async def scalar_html():
+    return get_scalar_api_reference(
+        openapi_url=app.openapi_url,
+        title=app.title,
+    )
